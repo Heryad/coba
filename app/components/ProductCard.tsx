@@ -1,0 +1,111 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Product } from '@/app/context/DataProvider';
+
+type ProductCardProps = {
+  product: Product;
+};
+
+export default function ProductCard({ product }: ProductCardProps) {
+  const discountedPrice = product.final_price;
+  const hasDiscount = product.discount > 0;
+  
+  return (
+    <div className="group relative h-full">
+      <div className="aspect-h-4 aspect-w-3 w-full overflow-hidden rounded-lg bg-gray-100">
+        <div className="relative h-[400px] w-full">
+          <Link href={`/product/${product.id}`} className="block h-full">
+            <Image
+              src={product.images[0] || '/images/placeholder.jpg'}
+              alt={product.name}
+              fill
+              className="object-cover object-center transition-all duration-300 group-hover:scale-105"
+            />
+            {hasDiscount && (
+              <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold rounded-full py-1 px-2 z-10">
+                {product.discount}% OFF
+              </div>
+            )}
+          </Link>
+          
+          {/* Hover overlay with details - fixed positioning to prevent layout shifts */}
+          <div className="absolute bottom-0 left-0 right-0 bg-black/80 h-0 
+                         transition-[height] duration-300 ease-out
+                         group-hover:h-1/3 overflow-hidden">
+            <div className="p-4 h-full">
+              {/* Colors section */}
+              {product.colors && product.colors.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-xs uppercase text-gray-400 mb-1">Colors</p>
+                  <div className="flex space-x-1">
+                    {product.colors.map((color) => (
+                      <div 
+                        key={color} 
+                        className="w-6 h-6 rounded-full border border-white/20"
+                        style={{ backgroundColor: color.toLowerCase() }}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Sizes section */}
+              {product.sizes && product.sizes.length > 0 && (
+                <div>
+                  <p className="text-xs uppercase text-gray-400 mb-1">Sizes</p>
+                  <div className="flex flex-wrap gap-1">
+                    {product.sizes.map((size) => (
+                      <div 
+                        key={size} 
+                        className="min-w-[2rem] text-center px-2 py-1 text-xs border border-white/20 rounded text-white"
+                      >
+                        {size}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-4 flex justify-between">
+        <div>
+          <h3 className="text-sm text-gray-700 font-medium">
+            <Link href={`/product/${product.id}`}>
+              {product.name}
+            </Link>
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">{product.category}</p>
+        </div>
+        <div className="text-right">
+          {hasDiscount ? (
+            <div>
+              <p className="text-sm font-medium text-gray-900">${discountedPrice}</p>
+              <p className="text-sm text-gray-500 line-through">${product.price}</p>
+            </div>
+          ) : (
+            <p className="text-sm font-medium text-gray-900">${product.price}</p>
+          )}
+          <div className="flex items-center mt-1 justify-end">
+            <div className="flex items-center">
+              <svg
+                className="w-4 h-4 text-yellow-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.799-2.034c-.784-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <span className="text-xs text-gray-500 ml-1">{product.review.toFixed(1)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
