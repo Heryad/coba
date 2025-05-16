@@ -188,13 +188,15 @@ export default function Navbar() {
                         </div>
                         <div className="py-3 px-2">
                           {data.categories.find(c => c.id === openCategoryId)?.sub_categories?.map((subcat) => (
-                            <Link
+                            <div key={subcat + 1} onClick={() => {setIsShopDropdownOpen(false);}}>
+                              <Link
                               key={subcat}
-                              href={`/shop/${data.categories.find(c => c.id === openCategoryId)?.category_name.toLowerCase()}/${subcat.toLowerCase()}`}
+                              href={`/shop?category=${data.categories.find(c => c.id === openCategoryId)?.category_name.toLowerCase()}&subcategory=${subcat.toLowerCase()}`}
                               className="block px-4 py-2 text-sm text-gray-600 hover:bg-white hover:text-[#009450] rounded-md"
                             >
                               {subcat}
                             </Link>
+                            </div>
                           ))}
                         </div>
                       </>

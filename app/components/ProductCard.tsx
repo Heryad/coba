@@ -17,7 +17,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="group relative h-full">
       <div className="aspect-h-4 aspect-w-3 w-full overflow-hidden rounded-lg bg-gray-100">
         <div className="relative h-[400px] w-full">
-          <Link href={`/product/${product.id}`} className="block h-full">
+          <Link href={`/shop/details/${product.id}`} className="block h-full">
             <Image
               src={product.images[0] || '/images/placeholder.jpg'}
               alt={product.name}
@@ -77,7 +77,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="mt-4 flex justify-between">
         <div>
           <h3 className="text-sm text-gray-700 font-medium">
-            <Link href={`/product/${product.id}`}>
+            <Link href={`/shop/details/${product.id}`}>
               {product.name}
             </Link>
           </h3>
