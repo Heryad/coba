@@ -71,7 +71,7 @@ export default function CheckoutPage() {
                 postcode: formData.zipCode,
                 address: formData.address,
                 paymentMethodId: selectedPaymentMethod,
-                user_id: user?.id || ''
+                user_id: user?.id || null
             };
 
             // Create order
