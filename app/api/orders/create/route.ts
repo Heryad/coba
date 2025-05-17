@@ -45,7 +45,6 @@ export async function POST(request: Request) {
                     address,
                     payment_method_id: paymentMethodId,
                     status: 'pending',
-                    // Using a temporary user ID until authentication is implemented
                     user_id: user_id
                 }
             ])

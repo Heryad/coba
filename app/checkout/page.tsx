@@ -7,11 +7,13 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function CheckoutPage() {
     const { cartItems, totalPrice, totalDiscount, clearCart } = useCart();
     const { addToast } = useToast();
     const { data } = useData();
+    const { user } = useAuth();
     const router = useRouter();
     const [isVisible, setIsVisible] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +70,8 @@ export default function CheckoutPage() {
                 city: formData.city,
                 postcode: formData.zipCode,
                 address: formData.address,
-                paymentMethodId: selectedPaymentMethod
+                paymentMethodId: selectedPaymentMethod,
+                user_id: user?.id || ''
             };
 
             // Create order

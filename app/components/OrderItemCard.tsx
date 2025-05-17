@@ -14,7 +14,7 @@ interface OrderItemCardProps {
   order: {
     id: string;
     date: string;
-    status: 'pending' | 'processing' | 'delivered';
+    status: 'pending' | 'accepted' | 'processing' | 'delivered';
     total: number;
     items: OrderItem[];
   };
@@ -23,6 +23,7 @@ interface OrderItemCardProps {
 export default function OrderItemCard({ order }: OrderItemCardProps) {
   const statusColors = {
     pending: 'bg-yellow-100 text-yellow-800',
+    accepted: 'bg-purple-100 text-purple-800',
     processing: 'bg-blue-100 text-blue-800',
     delivered: 'bg-green-100 text-green-800'
   };
@@ -79,7 +80,7 @@ export default function OrderItemCard({ order }: OrderItemCardProps) {
       {/* Order Footer */}
       <div className="p-6 bg-gray-50">
         <Link 
-          href={`/orders/${order.id}`}
+          href={`/order-track?orderId=${order.id}`}
           className="text-sm font-medium text-gray-900 hover:text-gray-700"
         >
           View Details →
