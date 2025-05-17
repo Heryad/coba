@@ -476,6 +476,7 @@ export default function Navbar() {
       }`}>
         <nav className="px-4 pt-2 pb-3 space-y-1 border-t border-gray-200">
           <Link 
+            onClick={() => {setIsMobileMenuOpen(false)}}          
             href="/" 
             className={`block px-3 py-2 rounded-md text-base font-medium ${
               isActive('/') 
@@ -546,7 +547,7 @@ export default function Navbar() {
                       {category.sub_categories?.map((subcat) => (
                         <Link
                           key={subcat}
-                          href={`/shop/${category.category_name.toLowerCase()}/${subcat.toLowerCase()}`}
+                          href={`/shop?category=${category.category_name.toLowerCase()}&subcategory=${subcat.toLowerCase()}`}
                           className="block py-1.5 text-sm text-gray-500 hover:text-[#000]"
                         >
                           {subcat}
@@ -560,6 +561,7 @@ export default function Navbar() {
           </div>
           
           <Link 
+           onClick={() => {setIsMobileMenuOpen(false)}}
             href="/track-order" 
             className={`block px-3 py-2 rounded-md text-base font-medium ${
               isActive('/track-order') 
@@ -571,6 +573,7 @@ export default function Navbar() {
           </Link>
           
           <Link 
+           onClick={() => {setIsMobileMenuOpen(false)}}
             href="/contact" 
             className={`block px-3 py-2 rounded-md text-base font-medium ${
               isActive('/contact') 
@@ -602,6 +605,7 @@ export default function Navbar() {
                   <p className="text-sm font-medium text-gray-700">{user.username || 'Profile'}</p>
                   <div className="mt-1 space-y-1">
                     <Link
+                    
                       href="/profile"
                       className="block text-sm text-gray-500 hover:text-[#000]"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -630,6 +634,7 @@ export default function Navbar() {
             </div>
           ) : (
             <Link
+            
               href="/auth"
               className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
               onClick={() => setIsMobileMenuOpen(false)}
