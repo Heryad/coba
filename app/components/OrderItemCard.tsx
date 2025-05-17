@@ -4,6 +4,8 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import RatingModal from './RatingModal';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '@/app/context/ToastContext';
+import { StarIcon } from '@heroicons/react/24/outline';
 
 interface OrderItem {
   id: string;
@@ -27,6 +29,7 @@ export default function OrderItemCard({ order }: OrderItemCardProps) {
   const [selectedItem, setSelectedItem] = useState<OrderItem | null>(null);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const {user} = useAuth();
+  const { addToast } = useToast();
 
   const statusColors = {
     pending: 'bg-yellow-100 text-yellow-800',
@@ -58,8 +61,11 @@ export default function OrderItemCard({ order }: OrderItemCardProps) {
 
       setIsRatingModalOpen(false);
       setSelectedItem(null);
+      addToast('Review Submitted Succesfully', 'success');
     } catch (error) {
-      console.error('Error submitting rating:', error);
+      addToast(`${error || 'Error Submitting Review'}`, 'error');
+      setIsRatingModalOpen(false);
+      setSelectedItem(null);
       // You might want to show an error message to the user here
     }
   };
@@ -116,9 +122,10 @@ export default function OrderItemCard({ order }: OrderItemCardProps) {
                     setSelectedItem(item);
                     setIsRatingModalOpen(true);
                   }}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-yellow-400 hover:text-yellow-500 transition-colors"
+                  title="Rate Product"
                 >
-                  Rate Product
+                  <StarIcon className="w-5 h-5" />
                 </button>
               )}
             </div>

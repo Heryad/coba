@@ -24,9 +24,9 @@ export default function RatingModal({ isOpen, onClose, onSubmit, productName }: 
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Rate {productName}</h2>
+    <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+      <div className="bg-white p-6 w-full max-w-md">
+        <h2 className="text-xl font-semibold mb-4">Rate: {productName}</h2>
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -78,7 +78,7 @@ export default function RatingModal({ isOpen, onClose, onSubmit, productName }: 
             <button
               type="submit"
               disabled={stars === 0}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium text-white bg-black hover:bg-black/80 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Submit Review
             </button>
