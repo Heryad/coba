@@ -95,11 +95,11 @@ function TrackOrderContent() {
     };
 
     return (
-        <main className="bg-gradient-to-b from-[#E8F5E9] to-white min-h-screen">
+        <main className="bg-white min-h-screen">
             <div className="bg-white rounded-t-[2.5rem] min-h-[calc(100vh-4rem)] shadow-lg">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="text-center mb-12 transform transition-all duration-500 hover:scale-[1.02]">
-                        <h1 className="text-4xl font-bold text-gray-900 mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#009450] to-[#007540]">
+                        <h1 className="text-4xl font-bold text-gray-900 mb-4 bg-clip-text text-transparent bg-black">
                             Track Your Order
                         </h1>
                         <p className="text-gray-600 text-lg">Enter your order ID to track your order status</p>
@@ -112,13 +112,13 @@ function TrackOrderContent() {
                                 value={orderId}
                                 onChange={(e) => setOrderId(e.target.value)}
                                 placeholder="Enter your order ID"
-                                className="flex-1 rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-900 focus:border-[#009450] focus:ring-2 focus:ring-[#009450]/20 transition-all duration-300 group-hover:border-[#009450]/50"
+                                className="flex-1 rounded-xl border-2 border-gray-200 px-4 py-3 text-gray-900 focus:border-black focus:ring-2 focus:ring-black/20 transition-all duration-300 group-hover:border-black/50"
                                 required
                             />
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="px-6 py-3 bg-[#009450] text-white rounded-xl hover:bg-[#007540] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#009450]/20 hover:shadow-xl hover:shadow-[#009450]/30 hover:-translate-y-0.5 active:translate-y-0"
+                                className="px-6 py-3 bg-black text-white rounded-md hover:bg-black/80 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 hover:-translate-y-0.5 active:translate-y-0"
                             >
                                 {isLoading ? (
                                     <span className="flex items-center gap-2">
@@ -152,7 +152,7 @@ function TrackOrderContent() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
                                     <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-                                        <svg className="w-5 h-5 text-[#009450]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-5 h-5 text-[#000]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
@@ -167,7 +167,7 @@ function TrackOrderContent() {
 
                                 <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
                                     <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-                                        <svg className="w-5 h-5 text-[#009450]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-5 h-5 text-[#000]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                         </svg>
                                         Payment Method
@@ -191,7 +191,7 @@ function TrackOrderContent() {
                             {/* Order Items */}
                             <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-sm">
                                 <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-                                    <svg className="w-5 h-5 text-[#009450]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5 text-[#000]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                     </svg>
                                     Order Items
@@ -242,18 +242,18 @@ function TrackOrderContent() {
                                 <div className="space-y-3">
                                     <div className="flex justify-between text-sm">
                                         <span className="text-gray-600">Subtotal</span>
-                                        <span className="text-gray-900">${order.total.toFixed(2)}</span>
+                                        <span className="text-black">${order.total.toFixed(2)}</span>
                                     </div>
                                     {order.discount > 0 && (
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-600">Discount</span>
-                                            <span className="text-green-600">-${order.discount.toFixed(2)}</span>
+                                            <span className="text-black">-${order.discount.toFixed(2)}</span>
                                         </div>
                                     )}
                                     <div className="border-t border-gray-200 pt-3 mt-3">
                                         <div className="flex justify-between">
-                                            <span className="text-base font-medium text-gray-900">Total</span>
-                                            <span className="text-base font-medium text-[#009450]">
+                                            <span className="text-base font-bold">Total</span>
+                                            <span className="text-base font-bold">
                                                 ${(order.total - order.discount).toFixed(2)}
                                             </span>
                                         </div>

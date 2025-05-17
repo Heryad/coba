@@ -101,7 +101,7 @@ export default function CheckoutPage() {
 
     if (cartItems.length === 0) {
         return (
-            <main className="bg-[#E8F5E9] min-h-screen">
+            <main className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="bg-white rounded-t-[2.5rem] min-h-[calc(100vh-4rem)]">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="text-center py-16">
@@ -109,7 +109,7 @@ export default function CheckoutPage() {
                             <p className="text-gray-600 mb-8">Add some items to your cart before checking out</p>
                             <Link 
                                 href="/shop"
-                                className="px-6 py-3 bg-[#009450] text-white rounded-xl hover:bg-[#007540] transition-all duration-300"
+                                className="px-6 py-3 bg-black text-white rounded-md hover:bg-black/80 transition-all duration-300"
                             >
                                 Continue Shopping
                             </Link>
@@ -121,8 +121,8 @@ export default function CheckoutPage() {
     }
 
     return (
-        <main className="bg-[#E8F5E9] min-h-screen">
-            <div className="bg-white rounded-t-[2.5rem] min-h-[calc(100vh-4rem)]">
+        <main className="bg-white min-h-screen">
+            <div className="bg-white min-h-[calc(100vh-4rem)]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         {/* Checkout Form */}
@@ -131,7 +131,7 @@ export default function CheckoutPage() {
                             
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Personal Information */}
-                                <div className="bg-gray-50 rounded-xl p-6">
+                                <div className="pt-4">
                                     <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
@@ -174,7 +174,7 @@ export default function CheckoutPage() {
                                 </div>
 
                                 {/* Shipping Address */}
-                                <div className="bg-gray-50 rounded-xl p-6">
+                                <div className="pt-4">
                                     <h3 className="text-lg font-medium text-gray-900 mb-4">Shipping Address</h3>
                                     <div className="space-y-4">
                                         <div>
@@ -241,8 +241,6 @@ export default function CheckoutPage() {
                                         </div>
                                     </div>
                                 </div>
-
-                               
                             </form>
                         </div>
 
@@ -253,7 +251,7 @@ export default function CheckoutPage() {
                             {/* Cart Items */}
                             <div className="space-y-4 mb-8">
                                 {cartItems.map((item) => (
-                                    <div key={`${item.id}-${item.selectedColor}-${item.selectedSize}`} className="flex gap-4 p-4 bg-gray-50 rounded-xl">
+                                    <div key={`${item.id}-${item.selectedColor}-${item.selectedSize}`} className="flex gap-4 p-4 bg-gray-200 items-center rounded-xl">
                                         <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
                                             <Image
                                                 src={item.image}
@@ -288,7 +286,7 @@ export default function CheckoutPage() {
                             </div>
 
                             {/* Payment Options */}
-                            <div className="bg-gray-50 rounded-xl p-6 mb-8">
+                            <div className="pt-4 mb-8">
                                 <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Method</h3>
                                 <div className="space-y-4">
                                     {data.paymentMethods.length > 0 ? (
@@ -298,8 +296,8 @@ export default function CheckoutPage() {
                                                     key={method.id}
                                                     className={`relative flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
                                                         selectedPaymentMethod === method.id
-                                                            ? 'border-[#009450] bg-[#009450]/5'
-                                                            : 'border-gray-200 hover:border-[#009450]/50'
+                                                            ? 'border-black/10 bg-black/10'
+                                                            : 'border-gray-200 hover:border-[#000]/50'
                                                     }`}
                                                 >
                                                     <input
@@ -334,7 +332,7 @@ export default function CheckoutPage() {
                                                     </div>
                                                     {selectedPaymentMethod === method.id && (
                                                         <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                                            <div className="w-5 h-5 rounded-full bg-[#009450] flex items-center justify-center">
+                                                            <div className="w-5 h-5 rounded-full bg-[#000] flex items-center justify-center">
                                                                 <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                                 </svg>
@@ -369,8 +367,8 @@ export default function CheckoutPage() {
                                     </div>
                                     <div className="border-t border-gray-200 pt-4">
                                         <div className="flex justify-between">
-                                            <span className="text-base font-medium text-gray-900">Total</span>
-                                            <span className="text-base font-medium text-[#009450]">${(totalPrice - totalDiscount).toFixed(2)}</span>       
+                                            <span className="text-base font-bold">Total</span>
+                                            <span className="text-base font-bold">${(totalPrice - totalDiscount).toFixed(2)}</span>       
                                         </div>
                                     </div>
                                 </div>
@@ -380,7 +378,7 @@ export default function CheckoutPage() {
                              <button
                                     onClick={handleSubmit}
                                     disabled={isSubmitting}
-                                    className="w-full h-14 rounded-xl bg-[#009450] text-white font-medium hover:bg-[#007540] transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#009450]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full h-14 mt-4 rounded-md bg-black text-white font-medium hover:bg-black/80 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#009450]/20 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isSubmitting ? (
                                         <span className="flex items-center justify-center gap-2">
