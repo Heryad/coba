@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { useState } from 'react';
+import RatingModal from './RatingModal';
+import { useAuth } from '../context/AuthContext';
 
 interface OrderItem {
   id: string;
@@ -21,11 +24,44 @@ interface OrderItemCardProps {
 }
 
 export default function OrderItemCard({ order }: OrderItemCardProps) {
+  const [selectedItem, setSelectedItem] = useState<OrderItem | null>(null);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const {user} = useAuth();
+
   const statusColors = {
     pending: 'bg-yellow-100 text-yellow-800',
     accepted: 'bg-purple-100 text-purple-800',
     processing: 'bg-blue-100 text-blue-800',
     delivered: 'bg-green-100 text-green-800'
+  };
+
+  const handleRatingSubmit = async (rating: { stars: number; description: string }) => {
+    if (!selectedItem || !user) return;
+
+    try {
+      const response = await fetch('/api/ratings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_id: selectedItem.id,
+          user_id: user?.id,
+          stars: rating.stars,
+          description: rating.description,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit rating');
+      }
+
+      setIsRatingModalOpen(false);
+      setSelectedItem(null);
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   return (
@@ -70,8 +106,21 @@ export default function OrderItemCard({ order }: OrderItemCardProps) {
                 Quantity: {item.quantity}
               </p>
             </div>
-            <div className="text-sm font-medium text-gray-900">
-              ${(item.price * item.quantity).toFixed(2)}
+            <div className="flex flex-col items-end gap-2">
+              <div className="text-sm font-medium text-gray-900">
+                ${(item.price * item.quantity).toFixed(2)}
+              </div>
+              {order.status === 'delivered' && (
+                <button
+                  onClick={() => {
+                    setSelectedItem(item);
+                    setIsRatingModalOpen(true);
+                  }}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  Rate Product
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -86,6 +135,19 @@ export default function OrderItemCard({ order }: OrderItemCardProps) {
           View Details →
         </Link>
       </div>
+
+      {/* Rating Modal */}
+      {selectedItem && (
+        <RatingModal
+          isOpen={isRatingModalOpen}
+          onClose={() => {
+            setIsRatingModalOpen(false);
+            setSelectedItem(null);
+          }}
+          onSubmit={handleRatingSubmit}
+          productName={selectedItem.product_name}
+        />
+      )}
     </div>
   );
 } 
