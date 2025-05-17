@@ -80,7 +80,7 @@ export default function OrderItemCard({ order }: OrderItemCardProps) {
       {/* Order Footer */}
       <div className="p-6 bg-gray-50">
         <Link 
-          href={`/order-track?orderId=${order.id}`}
+          href={`/track-order?orderId=${order.id}`}
           className="text-sm font-medium text-gray-900 hover:text-gray-700"
         >
           View Details →
