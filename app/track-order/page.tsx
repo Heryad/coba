@@ -96,7 +96,7 @@ function TrackOrderContent() {
 
     return (
         <main className="bg-white min-h-screen">
-            <div className="bg-white rounded-t-[2.5rem] min-h-[calc(100vh-4rem)] shadow-lg">
+            <div className="bg-white">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="text-center mb-12 transform transition-all duration-500 hover:scale-[1.02]">
                         <h1 className="text-4xl font-bold text-gray-900 mb-4 bg-clip-text text-transparent bg-black">
