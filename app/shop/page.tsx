@@ -230,7 +230,7 @@ function ShopContent() {
         <h3 className="text-sm font-medium text-gray-900 mb-4">Categories</h3>
         <select
           id={isMobile ? "mobile-categories" : "desktop-categories"}
-          className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-[#009450]/20 focus:border-[#009450]"
+          className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
@@ -246,7 +246,7 @@ function ShopContent() {
         <h3 className="text-sm font-medium text-gray-900 mb-4">Subcategories</h3>
         <select
           id={isMobile ? "mobile-subcategories" : "desktop-subcategories"}
-          className="w-full bg-white border border-gray-300 text-black rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-[#009450]/20 focus:border-[#009450]"
+          className="w-full bg-white border border-gray-300 text-black rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20"
           value={selectedSubcategory}
           onChange={(e) => setSelectedSubcategory(e.target.value)}
         >
@@ -272,7 +272,7 @@ function ShopContent() {
               placeholder="0"
               value={minPrice}
               onChange={(e) => {setMinPrice(e.target.value)}}
-              className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#009450]/20 focus:border-[#009450]"
+              className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20"
             />
           </div>
           <div>
@@ -282,7 +282,7 @@ function ShopContent() {
               placeholder="1000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#009450]/20 focus:border-[#009450]"
+              className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20"
             />
           </div>
         </div>
@@ -295,7 +295,7 @@ function ShopContent() {
           {commonColors.map((color) => (
             <button
               key={color.value}
-              className={`group relative w-10 h-10 rounded-full transition-transform duration-200 hover:scale-110 ring-1 ${selectedColors.includes(color.value) ? 'ring-2 ring-[#009450]' : 'ring-gray-200'}`}
+              className={`group relative w-10 h-10 rounded-full transition-transform duration-200 hover:scale-110 ring-1 ${selectedColors.includes(color.value) ? 'ring-2 ring-black' : 'ring-gray-200'}`}
               aria-label={color.label}
               title={color.label}
               onClick={() => toggleColorSelection(color.value)}
@@ -323,7 +323,7 @@ function ShopContent() {
           {commonSizes.map((size) => (
             <button
               key={size}
-              className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 transform hover:scale-105 ${selectedSizes.includes(size) ? 'bg-[#009450] text-white' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 transform hover:scale-105 ${selectedSizes.includes(size) ? 'bg-[#000] text-white' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}
               onClick={() => toggleSizeSelection(size)}
             >
               {size}
@@ -336,14 +336,14 @@ function ShopContent() {
       <div className="flex gap-4 mb-6">
         <button
           onClick={applyFilter}
-          className="w-full bg-[#009450] text-white py-3 rounded-xl hover:bg-[#007540] transition-all duration-300 transform hover:scale-[1.02] font-medium"
+          className="w-full bg-[#000] text-white py-3 rounded-md hover:bg-black/90 transition-all duration-300 transform hover:scale-[1.02] font-medium"
         >
           Apply Filters
         </button>
         {hasActiveFilters() && (
           <button
             onClick={resetFilters}
-            className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl hover:bg-gray-200 transition-all duration-300 transform hover:scale-[1.02] font-medium"
+            className="w-full bg-gray-100 text-gray-700 py-3 rounded-md hover:bg-gray-200 transition-all duration-300 transform hover:scale-[1.02] font-medium"
           >
             Reset
           </button>
@@ -362,7 +362,7 @@ function ShopContent() {
   }
 
   return (
-    <main className="bg-[#E8F5E9] min-h-screen">
+    <main className="bg-white min-h-screen">
       <div className="bg-white rounded-t-[2.5rem]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Mobile Filter Button */}
@@ -406,7 +406,7 @@ function ShopContent() {
                 </div>
                 <select 
                   id="product-sort"
-                  className="w-full sm:w-auto text-black px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#009450]/20 focus:border-[#009450] bg-white"
+                  className="w-full sm:w-auto text-black px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/20 bg-white"
                   value={sortOption}
                   onChange={(e) => handleSortChange(e.target.value)}
                 >
@@ -420,7 +420,7 @@ function ShopContent() {
 
               {/* Products Grid */}
               {isLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {[...Array(8)].map((_, index) => (
                     <ProductCardSkeleton key={index}/>
                   ))}
@@ -442,7 +442,7 @@ function ShopContent() {
                   <p className="mt-1 text-sm text-gray-500">Try adjusting your filters.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {filteredProducts.map(product => (
                     <div key={product.id}>
                       <ProductCard product={product} />

@@ -39,6 +39,15 @@ export type Product = {
   created_at: string
 }
 
+export type PaymentMethod = {
+  id: string
+  title: string
+  price: number
+  icon: string
+  is_active: boolean
+  created_at: string
+}
+
 export type ApiData = {
   images: {
     banners: Image[]
@@ -46,6 +55,7 @@ export type ApiData = {
   }
   categories: Category[]
   products: Product[]
+  paymentMethods: PaymentMethod[]
 }
 
 // Default initial state
@@ -55,7 +65,8 @@ const initialData: ApiData = {
     offers: []
   },
   categories: [],
-  products: []
+  products: [],
+  paymentMethods: []
 }
 
 // Create context

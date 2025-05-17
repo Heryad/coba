@@ -16,9 +16,9 @@ export default function Button({
   const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 hover:scale-105';
   
   const variants = {
-    primary: 'bg-[#009450] text-white hover:bg-[#009450]/90',
-    secondary: 'bg-[#E5E7EB] text-gray-900 hover:bg-gray-200',
-    outline: 'border border-[#009450] text-[#009450] hover:bg-[#009450]/5'
+    primary: 'bg-[#000] text-white hover:bg-[#000]/90',
+    secondary: 'bg-[#000] text-gray-900 hover:bg-gray-200',
+    outline: 'border border-[#000] text-gray-900 hover:bg-[#000]/20'
   };
 
   const sizes = {

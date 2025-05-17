@@ -3,12 +3,18 @@
 import { ProductDetailsSkeleton } from "@/app/components/skeletons";
 import { useParams } from "next/navigation";
 import { useData } from "@/app/context/DataProvider";
+import { useCart } from "@/app/context/CartContext";
+import { useToast } from "@/app/context/ToastContext";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import Button from "@/app/components/Button";
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
     const { data, isLoading, error } = useData();
+    const { addToCart, cartItems } = useCart();
+    const { addToast } = useToast();
     const product = data?.products.find((product) => product.id === id);
 
     const [selectedImage, setSelectedImage] = useState(0);
@@ -16,6 +22,19 @@ export default function ProductDetailsPage() {
     const [selectedSize, setSelectedSize] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [quantity, setQuantity] = useState(1);
+    const [isInCart, setIsInCart] = useState(false);
+
+    // Check if product is in cart on initial load and when dependencies change
+    useEffect(() => {
+        if (product && cartItems) {
+            const itemInCart = cartItems.find(
+                item => item.id === product.id && 
+                item.selectedColor === product.colors?.[selectedColor] &&
+                item.selectedSize === selectedSize
+            );
+            setIsInCart(!!itemInCart);
+        }
+    }, [cartItems, product, selectedColor, selectedSize]);
 
     // Animation visibility
     useEffect(() => {
@@ -46,10 +65,40 @@ export default function ProductDetailsPage() {
         }));
     };
 
+    const handleAddToCart = () => {
+        if (!product) return;
+
+        // Validate size if product has sizes
+        if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+            addToast('Please select a size', 'error');
+            return;
+        }
+
+        // Validate color if product has colors
+        if (product.colors && product.colors.length > 0 && selectedColor === undefined) {
+            addToast('Please select a color', 'error');
+            return;
+        }
+
+        addToCart({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            final_price: product.final_price,
+            discount: product.discount,
+            quantity: quantity,
+            image: product.images[0],
+            selectedColor: product.colors?.[selectedColor],
+            selectedSize: selectedSize
+        });
+
+        addToast('Added to cart successfully!', 'success');
+    };
+
     // Error state
     if (error) {
         return (
-            <main className="bg-[#E8F5E9] pt-16">
+            <main className="flex h-screen bg-white pt-16 items-center justify-center">
                 <div className="bg-white rounded-t-[2.5rem]">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="text-center py-16">
@@ -57,7 +106,7 @@ export default function ProductDetailsPage() {
                             <p className="text-gray-600 mb-8">{error.message}</p>
                             <button 
                                 onClick={() => window.history.back()}
-                                className="px-6 py-3 bg-[#009450] text-white rounded-xl hover:bg-[#007540] transition-all duration-300"
+                                className="px-6 py-3 bg-[#000] text-white rounded-md hover:bg-black-90 transition-all duration-300"
                             >
                                 Back to Shop
                             </button>
@@ -69,7 +118,7 @@ export default function ProductDetailsPage() {
     }
 
     return (
-        <main className="bg-[#E8F5E9]">
+        <main className="h-screen bg-white">
             <div className="bg-white rounded-t-[2.5rem]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     {isLoading ? (
@@ -84,7 +133,7 @@ export default function ProductDetailsPage() {
                                         <button
                                             key={index}
                                             onClick={() => setSelectedImage(index)}
-                                            className={`relative min-w-[5rem] w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 transform hover:scale-105 ${selectedImage === index ? 'border-[#009450]' : 'border-transparent'}`}
+                                            className={`relative min-w-[5rem] w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 transform hover:scale-105 ${selectedImage === index ? 'border-[#000]' : 'border-transparent'}`}
                                         >
                                             <Image
                                                 src={image}
@@ -160,7 +209,7 @@ export default function ProductDetailsPage() {
                                                     style={{ backgroundColor: color.value }}
                                                 >
                                                     {selectedColor === index && (
-                                                        <span className="absolute inset-0 rounded-full ring-2 ring-[#009450] transition-opacity duration-200" />
+                                                        <span className="absolute inset-0 rounded-full ring-2 ring-[#000] transition-opacity duration-200" />
                                                     )}
                                                     <span className="sr-only">{color.name}</span>
                                                 </button>
@@ -174,22 +223,22 @@ export default function ProductDetailsPage() {
                                     <div className={`mt-8 transition-all duration-500 delay-800 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                                         <div className="flex items-center justify-between">
                                             <h2 className="text-sm font-medium text-gray-900">Size</h2>
-                                            <button className="text-sm font-medium text-[#009450] hover:text-[#007540] transition-colors duration-200">
+                                            <button className="text-sm font-medium text-[#000] hover:text-black/80 transition-colors duration-200">
                                                 Size guide
                                             </button>
                                         </div>
                                         <div className="mt-3 grid grid-cols-6 gap-3">
                                             {product.sizes.map((size) => (
-                                                <button
+                                                <Button
                                                     key={size}
                                                     onClick={() => setSelectedSize(size)}
-                                                    className={`flex items-center justify-center rounded-xl border py-2 text-sm font-medium transition-all duration-200 transform hover:scale-105
+                                                    className={`flex items-center justify-center rounded-md border py-2 text-sm font-medium transition-all duration-200 transform hover:scale-105
                                                         ${selectedSize === size
-                                                            ? 'border-[#009450] bg-[#009450] text-white'
-                                                            : 'border-gray-300 text-gray-900 hover:bg-gray-50'}`}
+                                                            ? 'border-[#FFF] bg-[#000] text-white'
+                                                            : 'bg-white !text-black border-black'}`}
                                                 >
                                                     {size}
-                                                </button>
+                                                </Button>
                                             ))}
                                         </div>
                                     </div>
@@ -221,13 +270,46 @@ export default function ProductDetailsPage() {
                                     </div>
                                 </div>
 
-                                {/* Add to Cart Button */}
-                                <div className="mt-8">
+                                {/* Action Buttons */}
+                                <div className="mt-8 space-y-4">
                                     <button 
-                                        className="w-full h-14 rounded-xl font-medium bg-[#009450] text-white hover:bg-[#007540] hover:scale-[1.02] transition-all duration-300 transform"
+                                        onClick={handleAddToCart}
+                                        className={`w-full h-14 rounded-md font-medium transition-all duration-300 transform
+                                            ${isInCart 
+                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed border border-gray-200' 
+                                                : 'bg-[#000] text-white hover:bg-black/90 hover:scale-[1.02] shadow-lg shadow-[#009450]/20'}`}
+                                        disabled={isInCart}
                                     >
-                                        Add to Cart
+                                        <div className="flex items-center justify-center gap-2">
+                                            {isInCart ? (
+                                                <>
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    <span>Added to Cart</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                    </svg>
+                                                    <span>Add to Cart</span>
+                                                </>
+                                            )}
+                                        </div>
                                     </button>
+                                    
+                                    {isInCart && (
+                                        <Link 
+                                            href="/checkout"
+                                            className="w-full h-14 rounded-md font-medium bg-black text-[#FFF] hover:bg-black/90 hover:text-white transition-all duration-300 transform flex items-center justify-center gap-2 shadow-lg shadow-[#009450]/10"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                            <span>Proceed to Checkout</span>
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
                         </div>

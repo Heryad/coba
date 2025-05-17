@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import { Product } from '@/app/context/DataProvider';
 
 type ProductCardProps = {
@@ -76,7 +75,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       
       <div className="mt-4 flex justify-between">
         <div>
-          <h3 className="text-sm text-gray-700 font-medium">
+          <h3 className="text-sm text-gray-700 font-bold">
             <Link href={`/shop/details/${product.id}`}>
               {product.name}
             </Link>
@@ -86,8 +85,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="text-right">
           {hasDiscount ? (
             <div>
-              <p className="text-sm font-medium text-gray-900">${discountedPrice}</p>
-              <p className="text-sm text-gray-500 line-through">${product.price}</p>
+              <p className="text-sm font-medium text-gray-900">${discountedPrice.toLocaleString()}</p>
+              <p className="text-sm text-gray-500 line-through">${product.price.toLocaleString()}</p>
             </div>
           ) : (
             <p className="text-sm font-medium text-gray-900">${product.price}</p>

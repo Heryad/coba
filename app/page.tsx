@@ -100,7 +100,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow bg-[#E8F5E9]">
+      <main className="flex-grow bg-white">
         {/* Hero Section */}
         <section className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           {isLoading ? (
@@ -115,12 +115,12 @@ export default function Home() {
                   Explore our curated collection of stylish clothing and accessories tailored to your unique taste.
                 </p>
                 <Link href="/shop">
-                  <Button size="lg" className="bg-[#009450] hover:bg-[#009450]/90">
+                  <Button size="lg" variant="primary">
                     EXPLORE NOW
                   </Button>
                 </Link>
               </div>
-              <div className="relative h-[500px] rounded-tr-[8rem] rounded-bl-[8rem] overflow-hidden">
+              <div className="relative h-[500px] rounded-tr-[8rem] rounded-bl-[8rem] overflow-hidden bg-red-500">
                 {topBanners && topBanners.length > 0 && (
                   <Image
                     src={topBanners[0].image}
@@ -143,20 +143,20 @@ export default function Home() {
         </section>
 
         {/* Best Selling Section */}
-        <div className="bg-[#E8F5E9] rounded-t-[2.5rem] mt-12">
+        <div className="rounded-t-[2.5rem] mt-12">
           <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900">Best selling</h2>
               <p className="mt-4 text-gray-600">Get in on the trend with our curated selection of best-selling styles</p>
             </div>
             {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {[...Array(3)].map((_, index) => (
                   <ProductCardSkeleton key={index} />
                 ))}
               </div>
             ) : data.products && data.products.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {data.products.slice(0, 3).map((product) => (
                   <div key={product.id}>
                     <ProductCard product={product} />
@@ -205,13 +205,13 @@ export default function Home() {
             </button>
           </div>
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[...Array(4)].map((_, index) => (
                 <ProductCardSkeleton key={index} />
               ))}
             </div>
           ) : filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {filteredProducts.map((product) => (
                 <div key={product.id}>
                   <ProductCard product={product} />
@@ -230,20 +230,20 @@ export default function Home() {
           {isLoading ? (
             <OfferSkeleton />
           ) : exclusiveBanner ? (
-            <div className="bg-[#009450]/10 rounded-3xl p-8 lg:p-12">
+            <div className="bg-[#000]/10 rounded-3xl p-8 lg:p-12">
               <div className="grid md:grid-cols-2 gap-8 items-center">
                 <div className="space-y-6">
                   <h2 className="text-3xl font-bold text-gray-900">
                     {exclusiveBanner.title}
                   </h2>
                   <p className="text-gray-600">
-                    Unlock the exclusive style right now! Get 30% off on new arrivals.
+                    Unlock the exclusive style right now! Get 10% off on new arrivals.
                   </p>
                   <div className="bg-[#009450]/5 p-6 rounded-xl inline-block">
                     <Timer />
                   </div>
                   <Link href="/shop">
-                    <Button size="lg" className="bg-[#009450] hover:bg-[#009450]/90 ml-6">
+                    <Button size="lg" variant="primary" className="ml-6">
                       SHOP NOW
                     </Button>
                   </Link>
@@ -271,15 +271,15 @@ export default function Home() {
             Designer Clothes For You
           </h2>
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[...Array(3)].map((_, index) => (
                 <CategorySkeleton key={index} />
               ))}
             </div>
           ) : categories.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {categories.map((category) => (
-                <div key={category.id} className="relative h-[300px] group overflow-hidden rounded-3xl">
+                <div key={category.id} className="relative h-[400px] group overflow-hidden rounded-3xl">
                   <Image
                     src={category.image_url}
                     alt={category.name}

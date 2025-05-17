@@ -27,6 +27,18 @@ export async function GET(request: NextRequest) {
       throw new Error('Error fetching categories');
     }
 
+    // Fetch payment methods
+    const { data: paymentMethods, error: paymentMethodsError } = await supabase
+      .from('payment_methods')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: true });
+
+    if (paymentMethodsError) {
+      console.error('Error fetching payment methods:', paymentMethodsError);
+      throw new Error('Error fetching payment methods');
+    }
+
     // Fetch products
     const { data: products, error: productsError } = await supabase
       .from('products_table')
@@ -71,6 +83,7 @@ export async function GET(request: NextRequest) {
       },
       categories: categories,
       products: transformedProducts,
+      paymentMethods: paymentMethods
     };
 
     return NextResponse.json(responseData);
