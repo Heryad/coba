@@ -18,12 +18,12 @@ export default function Toast() {
     if (!isVisible) return null;
 
     return (
-        <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+        <div className="fixed bottom-4 right-4 z-50 flex flex-col-reverse gap-2">
             {toasts.map((toast) => (
                 <div
                     key={toast.id}
-                    className={`min-w-[300px] p-4 rounded-xl shadow-lg transform transition-all duration-300 ease-in-out
-                        ${toast.type === 'success' ? 'bg-[#009450]' : 
+                    className={`min-w-[300px] p-4 rounded-md shadow-lg transform transition-all duration-300 ease-in-out
+                        ${toast.type === 'success' ? 'bg-[#000]' : 
                           toast.type === 'error' ? 'bg-red-500' : 
                           'bg-blue-500'} 
                         text-white`}

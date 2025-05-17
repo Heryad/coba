@@ -168,7 +168,7 @@ export default function Navbar() {
                 }`}
               >
                 {/* Main dropdown with categories and subcategories side by side */}
-                <div className="flex shadow-xl rounded-lg overflow-hidden">
+                <div className="flex shadow-xl overflow-hidden">
                   {/* Categories column */}
                   <div className="w-64 bg-white">
                     <div className="px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-semibold border-b border-gray-100">
@@ -321,7 +321,7 @@ export default function Navbar() {
 
                   {/* Profile Dropdown */}
                   {isProfileDropdownOpen && (
-                    <div className="profile-dropdown absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                    <div className="profile-dropdown absolute right-0 mt-2 w-48 shadow-lg bg-white ring-opacity-5 z-50">
                       <div className="py-1" role="menu" aria-orientation="vertical">
                         <Link
                           href="/profile"
@@ -332,7 +332,7 @@ export default function Navbar() {
                           My Profile
                         </Link>
                         <Link
-                          href="/orders"
+                          href="/profile?tab=orders"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           role="menuitem"
                           onClick={() => setIsProfileDropdownOpen(false)}

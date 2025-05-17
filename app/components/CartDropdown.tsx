@@ -16,7 +16,7 @@ export default function CartDropdown({ onAction }: { onAction: () => void }) {
     };
 
     return (
-        <div className="absolute right-0 mt-2 md:w-92 w-82 sm:w-72 bg-white rounded-xl shadow-xl overflow-hidden">
+        <div className="absolute right-0 mt-2 md:w-92 w-82 sm:w-72 bg-white shadow-xl overflow-hidden">
             <div className="p-4 border-b border-gray-100">
                 <h3 className="text-lg font-semibold text-gray-900">Shopping Cart</h3>
             </div>

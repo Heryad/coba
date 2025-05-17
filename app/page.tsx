@@ -118,7 +118,7 @@ export default function Home() {
                     src={topBanners[0].image}
                     alt={topBanners[0].title || 'Hero background'}
                     fill
-                    className="object-cover"
+                    className="object-cover object-top"
                     priority
                   />
                   <div className="absolute inset-0 bg-black/60" />
