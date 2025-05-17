@@ -7,35 +7,35 @@ import Button from "@/app/components/Button";
 import Timer from "@/app/components/Timer";
 import ProductCard from "@/app/components/ProductCard";
 import { useData, Product } from "@/app/context/DataProvider";
-import { 
-  ProductCardSkeleton, 
-  HeroSkeleton, 
-  CategorySkeleton, 
-  OfferSkeleton 
+import {
+  ProductCardSkeleton,
+  HeroSkeleton,
+  CategorySkeleton,
+  OfferSkeleton
 } from "@/app/components/skeletons";
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('NEW ARRIVALS');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  
+
   // Get data from context provider
   const { data, isLoading, error } = useData();
-  
+
   // Filter products based on active filter
   useEffect(() => {
     if (data.products.length > 0) {
       filterProducts(activeFilter, data.products);
     }
   }, [activeFilter, data.products]);
-  
+
   const filterProducts = (filter: string, products: Product[] = []) => {
     let result: Product[] = [];
-    
+
     if (products.length === 0) {
       setFilteredProducts([]);
       return;
     }
-    
+
     switch (filter) {
       case 'NEW ARRIVALS':
         // Sort by newest first
@@ -43,32 +43,32 @@ export default function Home() {
           return new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime();
         });
         break;
-        
+
       case 'SALE':
         // Sort by most ordered (bestsellers)
         result = [...products].sort((a, b) => {
           return (b.total_orders || 0) - (a.total_orders || 0);
         });
         break;
-        
+
       case 'HOT':
         // Sort by highest review score
         result = [...products].sort((a, b) => {
           return (b.review || 0) - (a.review || 0);
         });
         break;
-        
+
       case 'DISCOUNTS':
         // Filter by discounted items and sort by discount percentage
         result = [...products]
           .filter(product => (product.discount || 0) > 0)
           .sort((a, b) => (b.discount || 0) - (a.discount || 0));
         break;
-        
+
       default:
         result = [...products];
     }
-    
+
     setFilteredProducts(result.slice(0, 4)); // Limit to 4 items
   };
 
@@ -77,16 +77,16 @@ export default function Home() {
     id: img.id,
     title: img.title || 'Fashion Banner',
     image: img.photo_url,
-    placement: 'top'
+    placement: 'cover'
   })) || [];
-  
-  const exclusiveBanner = data.images.offers.length 
+
+  const exclusiveBanner = data.images.offers.length
     ? {
-        id: data.images.offers[0].id,
-        title: data.images.offers[0].title || 'Exclusive Offer',
-        image: data.images.offers[0].photo_url,
-        placement: 'exclusive_offer'
-      }
+      id: data.images.offers[0].id,
+      title: data.images.offers[0].title || 'Exclusive Offer',
+      image: data.images.offers[0].photo_url,
+      placement: 'exclusive_offer'
+    }
     : null;
 
   // Process categories from API data
@@ -98,39 +98,49 @@ export default function Home() {
     image_url: cat.photo_url || `/images/placeholder.jpg`,
   })) || [];
 
+  useEffect(() => {
+    console.log(topBanners)
+  }, [data])
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow bg-white">
         {/* Hero Section */}
-        <section className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section className="relative min-h-[700px]">
           {isLoading ? (
             <HeroSkeleton />
           ) : (
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div className="space-y-6">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                  {topBanners && topBanners.length > 0 && topBanners[0].title ? topBanners[0].title : 'Discover and Find Your Own Fashion!'}
-                </h1>
-                <p className="text-lg text-gray-600">
-                  Explore our curated collection of stylish clothing and accessories tailored to your unique taste.
-                </p>
-                <Link href="/shop">
-                  <Button size="lg" variant="primary">
-                    EXPLORE NOW
-                  </Button>
-                </Link>
-              </div>
-              <div className="relative h-[500px] rounded-tr-[8rem] rounded-bl-[8rem] overflow-hidden bg-red-500">
-                {topBanners && topBanners.length > 0 && (
+            <div className="relative min-h-[700px]">
+              {/* Background Image */}
+              {topBanners && topBanners.length > 0 && topBanners[0].image && (
+                <div className="absolute inset-0">
                   <Image
                     src={topBanners[0].image}
-                    alt={topBanners[0].title || "Fashion model"}
+                    alt={topBanners[0].title || 'Hero background'}
                     fill
                     className="object-cover"
                     priority
                   />
-                )}
-                <div className="absolute bottom-0 right-0 p-8">
+                  <div className="absolute inset-0 bg-black/60" />
+                </div>
+              )}
+              
+              <div className="relative z-10 gap-8 items-center h-full py-[200px] px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                <div className="space-y-6">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                    {topBanners && topBanners.length > 0 && topBanners[0].title ? topBanners[0].title : 'Discover and Find Your Own Fashion!'}
+                  </h1>
+                  <p className="text-lg text-white/90">
+                    Explore our curated collection of stylish clothing and accessories tailored to your unique taste.
+                  </p>
+                  <Link href="/shop">
+                    <Button size="lg" variant="primary">
+                      EXPLORE NOW
+                    </Button>
+                  </Link>
+                </div>
+                {/* Dots or other decorations */}
+                <div className="absolute bottom-8 right-8">
                   <div className="flex gap-1">
                     {[...Array(1)].map((_, i) => (
                       <div key={i} className="w-2 h-2 bg-white rounded-full opacity-60" />
@@ -179,25 +189,25 @@ export default function Home() {
         {/* Products Section (Filtered Products) */}
         <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="flex justify-center gap-8 mb-12">
-            <button 
+            <button
               className={`transition-all duration-300 ${activeFilter === 'NEW ARRIVALS' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
               onClick={() => setActiveFilter('NEW ARRIVALS')}
             >
               NEW ARRIVALS
             </button>
-            <button 
+            <button
               className={`transition-all duration-300 ${activeFilter === 'SALE' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
               onClick={() => setActiveFilter('SALE')}
             >
               SALE
             </button>
-            <button 
+            <button
               className={`transition-all duration-300 ${activeFilter === 'HOT' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
               onClick={() => setActiveFilter('HOT')}
             >
               HOT
             </button>
-            <button 
+            <button
               className={`transition-all duration-300 ${activeFilter === 'DISCOUNTS' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
               onClick={() => setActiveFilter('DISCOUNTS')}
             >
@@ -289,8 +299,8 @@ export default function Home() {
                   <div className="absolute inset-0 bg-black/40 p-6 flex flex-col justify-end">
                     <h3 className="text-white text-xl font-bold">{category.name}</h3>
                     <p className="text-white/80 mt-2">
-                      {category.subcategories && category.subcategories.length > 0 
-                        ? `${category.subcategories.length} subcategories available` 
+                      {category.subcategories && category.subcategories.length > 0
+                        ? `${category.subcategories.length} subcategories available`
                         : 'Explore our collection'}
                     </p>
                   </div>
@@ -304,6 +314,6 @@ export default function Home() {
           )}
         </section>
       </main>
-    </div>
+    </div >
   );
 }
