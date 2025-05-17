@@ -118,7 +118,7 @@ export default function ProductDetailsPage() {
     }
 
     return (
-        <main className="h-screen bg-white">
+        <main className="min-h-screen bg-white">
             <div className="bg-white rounded-t-[2.5rem]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     {isLoading ? (
