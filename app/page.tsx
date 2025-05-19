@@ -125,7 +125,7 @@ export default function Home() {
                 </div>
               )}
               
-              <div className="relative z-10 gap-8 items-center h-full py-[200px] px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+              <div className="relative z-10 gap-8 items-center h-full py-[200px] px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto top-40">
                 <div className="space-y-6">
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
                     {topBanners && topBanners.length > 0 && topBanners[0].title ? topBanners[0].title : 'Discover and Find Your Own Fashion!'}
@@ -231,6 +231,12 @@ export default function Home() {
               <p className="text-gray-500">No products available for this filter.</p>
             </div>
           )}
+
+            <div className="text-center mt-8">
+              <Link href="/shop">
+                <Button variant="outline">See all</Button>
+              </Link>
+            </div>
         </section>
 
         {/* Exclusive Offer Section */}
