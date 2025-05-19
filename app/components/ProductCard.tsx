@@ -40,9 +40,6 @@ export default function ProductCard({ product }: ProductCardProps) {
               {product.name}
             </Link>
           </h3>
-          <p className="mt-1 text-sm text-gray-500">{product.category}</p>
-        </div>
-        <div className="text-right">
           {hasDiscount ? (
             <div>
               <p className="text-sm font-medium text-gray-900">${discountedPrice.toLocaleString()}</p>
@@ -51,6 +48,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           ) : (
             <p className="text-sm font-medium text-gray-900">${product.price}</p>
           )}
+        </div>
+        <div className="text-right">
+          
           <div className="flex items-center mt-1 justify-end">
             <div className="flex items-center">
               <svg
