@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/app/context/AuthContext';
 import Button from '@/app/components/Button';
@@ -56,7 +56,7 @@ interface OrderForCard {
   }[]; // Match OrderItem structure
 }
 
-function ProfilePageContent() {
+export default function ProfilePage() {
   const { user, loading } = useAuth();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
@@ -417,39 +417,5 @@ function ProfilePageContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function ProfilePage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-white pb-12">
-        <div className="relative h-[300px] bg-gray-200 animate-pulse"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="border-b border-gray-200 mb-8 flex space-x-8">
-            <div className="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
-          </div>
-          <div className="space-y-8">
-            <div className="bg-gray-100 rounded-xl p-6 animate-pulse">
-              <div className="flex justify-between items-center mb-6">
-                <div className="h-6 w-48 bg-gray-200 rounded"></div>
-                <div className="h-10 w-24 bg-gray-200 rounded"></div>
-              </div>
-              <div className="space-y-4">
-                <div className="h-4 w-32 bg-gray-200 rounded"></div>
-                <div className="h-10 w-full bg-gray-200 rounded"></div>
-                <div className="h-4 w-24 bg-gray-200 rounded"></div>
-                <div className="h-10 w-full bg-gray-200 rounded"></div>
-                <div className="h-4 w-36 bg-gray-200 rounded"></div>
-                <div className="h-10 w-full bg-gray-200 rounded"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    }>
-      <ProfilePageContent />
-    </Suspense>
   );
 } 

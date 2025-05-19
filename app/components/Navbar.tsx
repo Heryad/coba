@@ -8,6 +8,7 @@ import { useCart } from '@/app/context/CartContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import CartDropdown from './CartDropdown';
+import AmbassadorModal from './AmbassadorModal';
 
 export default function Navbar() {
   const { data } = useData();
@@ -19,7 +20,7 @@ export default function Navbar() {
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
   const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [mobileShopOpen, setMobileShopOpen] = useState(false);
+  const [isAmbassadorModalOpen, setIsAmbassadorModalOpen] = useState(false);
   const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -264,6 +265,17 @@ export default function Navbar() {
             >
               Track Order
             </Link>
+
+            <button
+              onClick={() => setIsAmbassadorModalOpen(true)}
+              className={`inline-flex items-center px-1 py-2 text-sm font-medium border-b-2 ${
+                isAmbassadorModalOpen
+                  ? `${hasScrolled ? 'border-white text-white' : 'border-black text-gray-900'}`
+                  : `border-transparent ${hasScrolled ? 'text-white/80 hover:text-white hover:border-white/60' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'}`
+              }`}
+            >
+              Ambassador Program
+            </button>
 
             <Link 
               href="/info?section=contact" 
@@ -556,6 +568,20 @@ export default function Navbar() {
             Track Order
           </Link>
           
+          <button
+            onClick={() => {
+              setIsAmbassadorModalOpen(true);
+              setIsMobileMenuOpen(false);
+            }}
+            className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
+              isAmbassadorModalOpen
+                ? 'bg-[#000]/10 text-[#000]'
+                : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Ambassador Program
+          </button>
+          
           <Link 
            onClick={() => {setIsMobileMenuOpen(false)}}
             href="/info?section=contact" 
@@ -589,7 +615,6 @@ export default function Navbar() {
                   <p className="text-sm font-medium text-gray-700">{user.username || 'Profile'}</p>
                   <div className="mt-1 space-y-1">
                     <Link
-                    
                       href="/profile?tab=profile"
                       className="block text-sm text-gray-500 hover:text-[#000]"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -651,6 +676,15 @@ export default function Navbar() {
           </form>
         </div>
       </div>
+
+      {/* Ambassador Modal */}
+      {user && (
+        <AmbassadorModal
+          isOpen={isAmbassadorModalOpen}
+          onClose={() => setIsAmbassadorModalOpen(false)}
+          refLink={`${process.env.NEXT_PUBLIC_APP_URL}/auth?tab=signup&ref=${user.id}`}
+        />
+      )}
     </header>
   );
 } 
