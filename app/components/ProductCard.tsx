@@ -35,7 +35,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       
       <div className="mt-4 flex justify-between">
         <div>
-          <h3 className="text-sm text-gray-700 font-bold">
+          <h3 className="text-md text-gray-700 font-bold">
             <Link href={`/shop/details/${product.id}`}>
               {product.name}
             </Link>
