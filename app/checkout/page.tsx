@@ -254,32 +254,40 @@ export default function CheckoutPage() {
                             {/* Cart Items */}
                             <div className="space-y-4 mb-8">
                                 {cartItems.map((item) => (
-                                    <div key={`${item.id}-${item.selectedColor}-${item.selectedSize}`} className="flex gap-4 p-4 bg-gray-200 items-center rounded-xl">
-                                        <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                                    <div 
+                                        key={`${item.id}-${item.selectedColor}-${item.selectedSize}`} 
+                                        className="flex gap-4 p-4 bg-white items-center rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100"
+                                    >
+                                        <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
                                             <Image
                                                 src={item.image}
                                                 alt={item.name}
                                                 fill
-                                                className="object-cover"
+                                                className="object-cover hover:scale-105 transition-transform duration-300"
                                             />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="text-sm font-medium text-gray-900 truncate">
+                                            <h3 className="text-sm font-semibold text-gray-900 truncate hover:text-black transition-colors duration-200">
                                                 {item.name}
                                             </h3>
-                                            <div className="mt-1 text-sm text-gray-500">
+                                            <div className="mt-1.5 flex items-center gap-2 text-sm text-gray-500">
                                                 {item.selectedColor && (
-                                                    <span className="inline-flex items-center gap-1">
-                                                        <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.selectedColor }} />
+                                                    <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded-full">
+                                                        <span className="w-3 h-3 rounded-full ring-1 ring-gray-200" style={{ backgroundColor: item.selectedColor }} />
+                                                        <span className="text-xs font-medium">Color</span>
                                                     </span>
                                                 )}
                                                 {item.selectedSize && (
-                                                    <span className="ml-2">Size: {item.selectedSize}</span>
+                                                    <span className="px-2 py-1 bg-gray-50 rounded-full text-xs font-medium">
+                                                        Size: {item.selectedSize}
+                                                    </span>
                                                 )}
                                             </div>
-                                            <div className="mt-2 flex items-center justify-between">
-                                                <span className="text-sm text-gray-500">Qty: {item.quantity}</span>
-                                                <span className="text-sm font-medium text-gray-900">
+                                            <div className="mt-3 flex items-center justify-between">
+                                                <span className="text-sm font-medium text-gray-600 bg-gray-50 px-2.5 py-1 rounded-full">
+                                                    Qty: {item.quantity}
+                                                </span>
+                                                <span className="text-sm font-bold text-gray-900">
                                                     ${((item.final_price || item.price) * item.quantity).toFixed(2)}
                                                 </span>
                                             </div>

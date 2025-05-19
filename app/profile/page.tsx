@@ -9,6 +9,7 @@ import placeholder_avatar from '@/public/images/placeholder_avatar.png'
 import { UserIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import { useToast } from '@/app/context/ToastContext';
 import { format } from 'date-fns';
+import { useSearchParams } from 'next/navigation';
 
 
 // Define types to match fetched data and OrderItemCard props
@@ -18,8 +19,8 @@ interface FetchedOrderItem {
   image: string; // Matches 'image' in the checkout data, assuming this is photo_url
   price: number; // Matches 'price' or 'final_price'
   quantity: number;
-  selectedColor?: string;
-  selectedSize?: string;
+  selectedColor: string;
+  selectedSize: string;
 }
 
 interface FetchedOrder {
@@ -50,14 +51,16 @@ interface OrderForCard {
     price: number;
     quantity: number;
     image_url: string;
+    selectedSize: string;
+    selectedColor: string;
   }[]; // Match OrderItem structure
 }
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
   const { addToast } = useToast();
-  
-  const [activeTab, setActiveTab] = useState<'profile' | 'orders'>('profile');
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
   const [isEditing, setIsEditing] = useState(false);
   const [refLink, setRefLink] = useState('');
   const [userOrders, setUserOrders] = useState<OrderForCard[]>([]);
@@ -71,12 +74,16 @@ export default function ProfilePage() {
   });
   const [isSaving, setIsSaving] = useState(false);
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    
+  };
+
   const handleCopyInviteLink = () => {
-    const inviteLink = `${window.location.origin}/invite/${user?.id}`;
+    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL + '/auth?tab=signup&ref=' + user?.id}`;
     navigator.clipboard.writeText(inviteLink);
     // You can add a toast notification here
     addToast('Referral Link Copied !', 'info');
-
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,7 +138,7 @@ export default function ProfilePage() {
         phone_number: user.phone_number || '',
         photo_url: user.photo_url || '',
       });
-      setRefLink(process.env.NEXT_PUBLIC_APP_URL + 'auth?tab=signup&ref=' + user.id);
+      setRefLink(process.env.NEXT_PUBLIC_APP_URL + '/auth?tab=signup&ref=' + user.id);
 
       // Fetch user orders
       const fetchUserOrders = async () => {
@@ -158,6 +165,8 @@ export default function ProfilePage() {
                   price: parseFloat(item.price.toString()),
                   quantity: item.quantity,
                   image_url: item.image,
+                  selectedSize: item.selectedSize,
+                  selectedColor: item.selectedColor
                 }))
               }));
             setUserOrders(formattedOrders);
@@ -270,7 +279,7 @@ export default function ProfilePage() {
         <div className="border-b border-gray-200 mb-8">
           <nav className="-mb-px flex space-x-8">
             <button
-              onClick={() => setActiveTab('profile')}
+              onClick={() => handleTabChange('profile')}
               className={`${
                 activeTab === 'profile'
                   ? 'border-black text-gray-900'
@@ -280,7 +289,7 @@ export default function ProfilePage() {
               Profile Details
             </button>
             <button
-              onClick={() => setActiveTab('orders')}
+              onClick={() => handleTabChange('orders')}
               className={`${
                 activeTab === 'orders'
                   ? 'border-black text-gray-900'

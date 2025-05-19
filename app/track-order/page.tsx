@@ -199,7 +199,7 @@ function TrackOrderContent() {
                                 <div className="space-y-4">
                                     {order.products.map((product, index) => (
                                         <div 
-                                            key={product.id} 
+                                            key={product.id + product.selectedColor + product.selectedSize} 
                                             className="flex gap-4 p-4 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
                                             style={{ animationDelay: `${index * 100}ms` }}
                                         >

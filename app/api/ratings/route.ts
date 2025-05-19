@@ -18,7 +18,7 @@ export async function POST(request: Request) {
           user_id,
           stars,
           description,
-          is_active: true
+          is_active: false
         }
       ]);
 

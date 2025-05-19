@@ -29,47 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               </div>
             )}
           </Link>
-          
-          {/* Hover overlay with details - fixed positioning to prevent layout shifts */}
-          <div className="absolute bottom-0 left-0 right-0 bg-black/80 h-0 
-                         transition-[height] duration-300 ease-out
-                         group-hover:h-1/3 overflow-hidden">
-            <div className="p-4 h-full">
-              {/* Colors section */}
-              {product.colors && product.colors.length > 0 && (
-                <div className="mb-3">
-                  <p className="text-xs uppercase text-gray-400 mb-1">Colors</p>
-                  <div className="flex space-x-1">
-                    {product.colors.map((color) => (
-                      <div 
-                        key={color} 
-                        className="w-6 h-6 rounded-full border border-white/20"
-                        style={{ backgroundColor: color.toLowerCase() }}
-                        title={color}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Sizes section */}
-              {product.sizes && product.sizes.length > 0 && (
-                <div>
-                  <p className="text-xs uppercase text-gray-400 mb-1">Sizes</p>
-                  <div className="flex flex-wrap gap-1">
-                    {product.sizes.map((size) => (
-                      <div 
-                        key={size} 
-                        className="min-w-[2rem] text-center px-2 py-1 text-xs border border-white/20 rounded text-white"
-                      >
-                        {size}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+
         </div>
       </div>
       

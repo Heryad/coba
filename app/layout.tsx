@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Your Brand",
+  title: "Coba T-Shirts",
   description: "Your brand description",
 };
 

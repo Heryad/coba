@@ -153,21 +153,20 @@ export default function Home() {
         </section>
 
         {/* Best Selling Section */}
-        <div className="rounded-t-[2.5rem] mt-12">
-          <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section className="py-12 px-4 sm:px-6 lg:px-5 mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900">Best selling</h2>
               <p className="mt-4 text-gray-600">Get in on the trend with our curated selection of best-selling styles</p>
             </div>
             {isLoading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {[...Array(3)].map((_, index) => (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {[...Array(4)].map((_, index) => (
                   <ProductCardSkeleton key={index} />
                 ))}
               </div>
             ) : data.products && data.products.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {data.products.slice(0, 3).map((product) => (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {data.products.slice(0, 4).map((product) => (
                   <div key={product.id}>
                     <ProductCard product={product} />
                   </div>
@@ -183,11 +182,10 @@ export default function Home() {
                 <Button variant="outline">See all</Button>
               </Link>
             </div>
-          </section>
-        </div>
+        </section>
 
         {/* Products Section (Filtered Products) */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section className="py-12 px-4 sm:px-6 lg:px-5 mx-auto">
           <div className="flex justify-center gap-8 mb-12">
             <button
               className={`transition-all duration-300 ${activeFilter === 'NEW ARRIVALS' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
@@ -215,13 +213,13 @@ export default function Home() {
             </button>
           </div>
           {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {[...Array(4)].map((_, index) => (
                 <ProductCardSkeleton key={index} />
               ))}
             </div>
           ) : filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {filteredProducts.map((product) => (
                 <div key={product.id}>
                   <ProductCard product={product} />

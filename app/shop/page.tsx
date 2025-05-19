@@ -7,6 +7,8 @@ import ProductCard from '@/app/components/ProductCard';
 import ProductCardSkeleton from '@/app/components/skeletons/ProductCardSkeleton';
 import { Product } from '@/app/context/DataProvider';
 import { useSearchParams } from "next/navigation";
+import { FunnelIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 function ShopContent() {
   const { data, isLoading, error } = useData();
@@ -60,21 +62,33 @@ function ShopContent() {
   useEffect(() => {
     const category = searchParams.get('category');
     const subcategory = searchParams.get('subcategory');
+    const search = searchParams.get('search');
 
-    if (category || subcategory) {
+    if (category || subcategory || search) {
       setSelectedCategory(category || '');
       setSelectedSubcategory(subcategory || '');
-      applyFilters(category || '', subcategory || '');
+      applyFilters(category || '', subcategory || '', search || '');
     }
   }, [searchParams, data.products]);
 
   // Function to apply filters
-  const applyFilters = (category: string = selectedCategory, subcategory: string = selectedSubcategory) => {
+  const applyFilters = (
+    category: string = selectedCategory, 
+    subcategory: string = selectedSubcategory,
+    search: string = searchParams.get('search') || ''
+  ) => {
     if (isLoading || error || !data.products) {
       return;
     }
 
     let filtered = [...data.products];
+
+    // Filter by search query
+    if (search) {
+      filtered = filtered.filter(product => 
+        product.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
 
     // Filter by category
     if (category) {
@@ -146,7 +160,12 @@ function ShopContent() {
     setSelectedColors([]);
     setSelectedSizes([]);
     setSortOption('newest');
-    // Reset to all products
+    // Reset to all products and remove search from URL
+    if (searchParams.get('search')) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('search');
+      window.history.pushState({}, '', newUrl.toString());
+    }
     setFilteredProducts(data.products || []);
   };
 
@@ -158,7 +177,8 @@ function ShopContent() {
       minPrice !== '' ||
       maxPrice !== '' ||
       selectedColors.length > 0 ||
-      selectedSizes.length > 0
+      selectedSizes.length > 0 ||
+      searchParams.get('search') !== null
     );
   };
 
@@ -210,7 +230,7 @@ function ShopContent() {
 
   const FilterPanel = ({ isMobile }: { isMobile: boolean }) => (
     
-    <div className="p-6">
+    <div className="p-6 xl:p-0 lg:p-0">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold text-gray-900">Filters</h2>
@@ -219,9 +239,7 @@ function ShopContent() {
           onClick={() => setIsMobileFilterOpen(false)}
           className="lg:hidden text-gray-500 hover:text-gray-700"
         >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <XMarkIcon className="w-6 h-6" />
         </button>
       </div>
 
@@ -251,13 +269,13 @@ function ShopContent() {
           onChange={(e) => setSelectedSubcategory(e.target.value)}
         >
           <option value="">All Subcategories</option>
-          {data?.categories?.flatMap(category => 
-            (category.sub_categories || []).map(subcategory => (
+          {selectedCategory && data?.categories
+            ?.find(category => category.category_name === selectedCategory)
+            ?.sub_categories?.map(subcategory => (
               <option key={subcategory} value={subcategory} className='text-black'>
                 {subcategory}
               </option>
-            ))
-          )}
+            ))}
         </select>
       </div>
 
@@ -370,9 +388,7 @@ function ShopContent() {
             onClick={() => setIsMobileFilterOpen(true)}
             className="lg:hidden mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
+            <FunnelIcon className='w-6 h-6'/>
             Filters
           </button>
 
@@ -397,11 +413,23 @@ function ShopContent() {
             <div className="flex-1">
               <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 transition-all duration-500 delay-200 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">All Products</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {searchParams.get('search') ? (
+                      `Search Results for "${searchParams.get('search')}"`
+                    ) : selectedCategory ? (
+                      selectedSubcategory ? (
+                        `${selectedCategory} — ${selectedSubcategory}`
+                      ) : (
+                        selectedCategory
+                      )
+                    ) : (
+                      'All Products'
+                    )}
+                  </h1>
                   <p className="mt-1 text-sm text-gray-500">
                     {isLoading ? 'Loading products...' : 
                       error ? '' :
-                      `${filteredProducts.length} products`}
+                      `${filteredProducts.length} Products`}
                   </p>
                 </div>
                 <select 
@@ -442,7 +470,7 @@ function ShopContent() {
                   <p className="mt-1 text-sm text-gray-500">Try adjusting your filters.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3">
                   {filteredProducts.map(product => (
                     <div key={product.id}>
                       <ProductCard product={product} />

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useData } from '@/app/context/DataProvider';
 import { useCart } from '@/app/context/CartContext';
 import { useAuth } from '@/app/context/AuthContext';
@@ -13,6 +14,7 @@ export default function Navbar() {
   const { cartItems } = useCart();
   const { user, signOut } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isShopDropdownOpen, setIsShopDropdownOpen] = useState(false);
   const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
@@ -21,15 +23,50 @@ export default function Navbar() {
   const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const shopBtnRef = useRef<HTMLButtonElement>(null);
   const cartBtnRef = useRef<HTMLButtonElement>(null);
   const mobileCartBtnRef = useRef<HTMLButtonElement>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
 
+  // Update active states when URL changes
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const category = searchParams.get('category');
+    const subcategory = searchParams.get('subcategory');
+    
+    if (category) {
+      setActiveCategory(category.toLowerCase());
+      setActiveSubcategory(subcategory?.toLowerCase() || null);
+      
+      // Find and set the open category
+      const matchingCategory = data.categories.find(
+        cat => cat.category_name.toLowerCase() === category.toLowerCase()
+      );
+      if (matchingCategory) {
+        setOpenCategoryId(matchingCategory.id);
+      }
+    } else {
+      setActiveCategory(null);
+      setActiveSubcategory(null);
+      setOpenCategoryId(null);
+    }
+  }, [pathname, data.categories]);
+
   // Check if current path matches
-  const isActive = (path: string) => {
-    return pathname === path;
+  const isActive = (path: string, category?: string, subcategory?: string) => {
+    if (pathname !== path) return false;
+    
+    if (category) {
+      if (subcategory) {
+        return activeCategory === category && activeSubcategory === subcategory;
+      }
+      return activeCategory === category;
+    }
+    
+    return true;
   };
 
   // Handle scroll detection
@@ -98,6 +135,15 @@ export default function Navbar() {
     console.log("Cart Dropdown is now:", isCartDropdownOpen);
   }, [isCartDropdownOpen]);
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   return (
     <header 
       className={`sticky top-0 z-50 transition-colors duration-300 ${
@@ -129,115 +175,83 @@ export default function Navbar() {
             </Link>
 
             {/* Shop Dropdown - Using hover on desktop */}
-            <div className="relative">
-              <button
-                ref={shopBtnRef}
-                onClick={() => setIsShopDropdownOpen(!isShopDropdownOpen)} // Keep for mobile/accessibility
-                onMouseEnter={() => setIsShopDropdownOpen(true)}
-                className={`inline-flex items-center px-1 py-2 text-sm font-medium border-b-2 ${
-                  isActive('/shop') 
-                    ? `${hasScrolled ? 'border-white text-white' : 'border-black text-gray-900'}` 
-                    : `border-transparent ${hasScrolled ? 'text-white/80 hover:text-white hover:border-white/60' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'}`
-                }`}
-              >
-                Men | Women | Children
-                <svg
-                  className={`ml-1 h-5 w-5 transition-transform duration-200 ${isShopDropdownOpen ? 'rotate-180' : ''}`}
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
+            <div className="relative flex space-x-4">
+              {data.categories.map((category) => (
+                <div key={category.id} className="relative inline-block">
+                  <button
+                    ref={shopBtnRef}
+                    onClick={() => {
+                      setOpenCategoryId(openCategoryId === category.id ? null : category.id);
+                      setIsShopDropdownOpen(!isShopDropdownOpen);
+                    }}
+                    onMouseEnter={() => {
+                      setOpenCategoryId(category.id);
+                      setIsShopDropdownOpen(true);
+                    }}
+                    className={`inline-flex items-center px-1 py-2 text-sm font-medium border-b-2 ${
+                      isActive('/shop', category.category_name.toLowerCase()) 
+                        ? `${hasScrolled ? 'border-white text-white' : 'border-black text-gray-900'}` 
+                        : `border-transparent ${hasScrolled ? 'text-white/80 hover:text-white hover:border-white/60' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'}`
+                    }`}
+                  >
+                    {category.category_name}
+                    {category.sub_categories?.length > 0 && (
+                      <svg
+                        className={`ml-1 h-5 w-5 transition-transform duration-200 ${openCategoryId === category.id ? 'rotate-180' : ''}`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    )}
+                  </button>
 
-              {/* Dropdown Menu Container */}
-              <div
-                ref={dropdownRef}
-                onMouseLeave={() => {
-                  setIsShopDropdownOpen(false);
-                  setOpenCategoryId(null);
-                }}
-                className={`absolute left-0 mt-2 z-20 transition-all duration-300 ${
-                  isShopDropdownOpen 
-                    ? 'opacity-100 visible' 
-                    : 'opacity-0 invisible pointer-events-none'
-                }`}
-              >
-                {/* Main dropdown with categories and subcategories side by side */}
-                <div className="flex shadow-xl overflow-hidden">
-                  {/* Categories column */}
-                  <div className="w-64 bg-white">
-                    <div className="px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-semibold border-b border-gray-100">
-                      Categories
-                    </div>
-                    <div className="py-2">
-                      {data.categories.map((category) => (
-                        <div 
-                          key={category.id}
-                          className={`px-4 py-2.5 text-sm hover:bg-gray-100 cursor-pointer ${
-                            openCategoryId === category.id ? 'bg-gray-100' : ''
-                          }`}
-                          onMouseEnter={() => setOpenCategoryId(category.id)}
-                        >
-                          <div className="flex items-center justify-between">
+                  {/* Individual Category Dropdown */}
+                  {openCategoryId === category.id && (
+                    <div
+                      ref={dropdownRef}
+                      onMouseLeave={() => {
+                        setIsShopDropdownOpen(false);
+                        setOpenCategoryId(null);
+                      }}
+                      className={`absolute left-0 mt-2 z-20 transition-all duration-300 ${
+                        isShopDropdownOpen 
+                          ? 'opacity-100 visible' 
+                          : 'opacity-0 invisible pointer-events-none'
+                      }`}
+                    >
+                      <div className="w-64 bg-white shadow-xl rounded-md overflow-hidden">
+                        <div className="px-4 py-3 text-xs text-gray-500 uppercase tracking-wider font-semibold border-b border-gray-100">
+                          {category.category_name}
+                        </div>
+                        <div className="py-2">
+                          {category.sub_categories?.map((subcat) => (
                             <Link
-                              href={`/shop/${category.category_name.toLowerCase()}`}
-                              className="font-medium text-gray-700 hover:text-[#000]"
-                            >
-                              {category.category_name}
-                            </Link>
-                            {category.sub_categories?.length > 0 && (
-                              <svg
-                                className="h-4 w-4 text-gray-500"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Subcategories column - always visible, shows different subcategories based on hover */}
-                  <div className="w-72 bg-gray-50 py-2">
-                    {openCategoryId ? (
-                      <>
-                        <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-100">
-                          {data.categories.find(c => c.id === openCategoryId)?.category_name || 'Subcategories'}
-                        </div>
-                        <div className="py-3 px-2">
-                          {data.categories.find(c => c.id === openCategoryId)?.sub_categories?.map((subcat) => (
-                            <div key={subcat + 1} onClick={() => {setIsShopDropdownOpen(false);}}>
-                              <Link
                               key={subcat}
-                              href={`/shop?category=${data.categories.find(c => c.id === openCategoryId)?.category_name.toLowerCase()}&subcategory=${subcat.toLowerCase()}`}
-                              className="block px-4 py-2 text-sm text-gray-600 hover:bg-white hover:text-[#000] rounded-md"
+                              href={`/shop?category=${category.category_name.toLowerCase()}&subcategory=${subcat.toLowerCase()}`}
+                              onClick={() => {
+                                setIsShopDropdownOpen(false);
+                                setOpenCategoryId(null);
+                              }}
+                              className={`block px-4 py-2.5 text-sm ${
+                                isActive('/shop', category.category_name.toLowerCase(), subcat.toLowerCase())
+                                  ? 'bg-gray-100 text-[#000]'
+                                  : 'text-gray-700 hover:bg-gray-100 hover:text-[#000]'
+                              }`}
                             >
                               {subcat}
                             </Link>
-                            </div>
                           ))}
                         </div>
-                      </>
-                    ) : (
-                      <div className="h-full flex items-center justify-center text-sm text-gray-500">
-                        
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              </div>
+              ))}
             </div>
 
             <Link 
@@ -252,9 +266,9 @@ export default function Navbar() {
             </Link>
 
             <Link 
-              href="/contact" 
+              href="/info?section=contact" 
               className={`inline-flex items-center px-1 py-2 text-sm font-medium border-b-2 ${
-                isActive('/contact') 
+                isActive('/info?section=contact') 
                   ? `${hasScrolled ? 'border-white text-white' : 'border-black text-gray-900'}` 
                   : `border-transparent ${hasScrolled ? 'text-white/80 hover:text-white hover:border-white/60' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'}`
               }`}
@@ -266,27 +280,29 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center space-x-4">
               {/* Search */}
               <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={`pl-10 pr-4 py-2 rounded-full border focus:outline-none focus:ring-2 focus:border-transparent text-sm ${
-                    hasScrolled 
-                      ? 'border-white/30 bg-white/10 text-white placeholder-white/60 focus:ring-white' 
-                      : 'border-gray-300 focus:ring-[#000] text-black'
-                  }`}
-                />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg 
-                    className={`h-5 w-5 ${hasScrolled ? 'text-white/60' : 'text-black'}`} 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
+                <form onSubmit={handleSearch}>
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={`pl-10 pr-4 py-2 rounded-full border focus:outline-none focus:ring-2 focus:border-transparent text-sm ${
+                      hasScrolled 
+                        ? 'border-white/30 bg-white/10 text-white placeholder-white/60 focus:ring-white' 
+                        : 'border-gray-300 focus:ring-[#000] text-black'
+                    }`}
+                  />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg 
+                      className={`h-5 w-5 ${hasScrolled ? 'text-white/60' : 'text-black'}`} 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </form>
               </div>
 
               {/* Login/Profile */}
@@ -324,7 +340,7 @@ export default function Navbar() {
                     <div className="profile-dropdown absolute right-0 mt-2 w-48 shadow-lg bg-white ring-opacity-5 z-50">
                       <div className="py-1" role="menu" aria-orientation="vertical">
                         <Link
-                          href="/profile"
+                          href="/profile?tab=profile"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           role="menuitem"
                           onClick={() => setIsProfileDropdownOpen(false)}
@@ -395,22 +411,7 @@ export default function Navbar() {
           </nav>
 
           {/* Mobile menu button */}
-          <div className="flex lg:hidden items-center space-x-4">
-            {/* Mobile Search */}
-            <button 
-              onClick={() => {/* Toggle search modal */}}
-              className={`p-2 rounded-full ${hasScrolled ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
-            >
-              <svg 
-                className={`h-5 w-5 ${hasScrolled ? 'text-white' : 'text-gray-500'}`} 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
-            
+          <div className="flex lg:hidden items-center space-x-4">     
             {/* Mobile Cart */}
             <div className="relative">
               <button
@@ -487,78 +488,61 @@ export default function Navbar() {
             Home
           </Link>
           
-          {/* Mobile Shop Categories */}
-          <div>
-            <button
-              onClick={() => setMobileShopOpen(!mobileShopOpen)}
-              className={`flex justify-between items-center w-full px-3 py-2 rounded-md text-base font-medium ${
-                isActive('/shop') 
-                  ? 'bg-[#000]/10 text-[#000]' 
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <span>Men | Women | Children</span>
-              <svg
-                className={`ml-1 h-5 w-5 transition-transform duration-200 ${mobileShopOpen ? 'rotate-180' : ''}`}
-                viewBox="0 0 20 20"
-                fill="currentColor"
+          {/* Mobile Categories */}
+          {data.categories.map((category) => (
+            <div key={category.id}>
+              <button
+                onClick={() => setOpenCategoryId(openCategoryId === category.id ? null : category.id)}
+                className={`flex justify-between items-center w-full px-3 py-2 rounded-md text-base font-medium ${
+                  isActive('/shop', category.category_name.toLowerCase())
+                    ? 'bg-[#000]/10 text-[#000]'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-            
-            {/* Mobile Categories Dropdown */}
-            <div className={`transition-all duration-300 overflow-hidden ${
-              mobileShopOpen ? 'max-h-[70vh] opacity-100 mt-2' : 'max-h-0 opacity-0'
-            }`}>
-              {data.categories.map((category) => (
-                <div key={category.id} className="ml-4">
-                  <button
-                    className="flex justify-between items-center w-full px-3 py-2 text-sm text-gray-600 hover:text-[#000]"
-                    onClick={() => setOpenCategoryId(openCategoryId === category.id ? null : category.id)}
+                <span>{category.category_name}</span>
+                {category.sub_categories?.length > 0 && (
+                  <svg
+                    className={`ml-1 h-5 w-5 transition-transform duration-200 ${
+                      openCategoryId === category.id ? 'rotate-180' : ''
+                    }`}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                   >
-                    <span>{category.category_name}</span>
-                    {category.sub_categories?.length > 0 && (
-                      <svg
-                        className={`h-4 w-4 transition-transform duration-200 ${
-                          openCategoryId === category.id ? 'rotate-180' : ''
-                        }`}
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                  
-                  {/* Mobile Subcategories */}
-                  <div className={`transition-all duration-300 overflow-hidden ${
-                    openCategoryId === category.id ? 'max-h-96 opacity-100 mt-1' : 'max-h-0 opacity-0'
-                  }`}>
-                    <div className="pl-6 space-y-1">
-                      {category.sub_categories?.map((subcat) => (
-                        <Link
-                          key={subcat}
-                          href={`/shop?category=${category.category_name.toLowerCase()}&subcategory=${subcat.toLowerCase()}`}
-                          className="block py-1.5 text-sm text-gray-500 hover:text-[#000]"
-                        >
-                          {subcat}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+                    <path
+                      fillRule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+              </button>
+              
+              {/* Mobile Subcategories */}
+              <div className={`transition-all duration-300 overflow-hidden ${
+                openCategoryId === category.id ? 'max-h-96 opacity-100 mt-1' : 'max-h-0 opacity-0'
+              }`}>
+                <div className="pl-6 space-y-1">
+                  {category.sub_categories?.map((subcat) => (
+                    <Link
+                      key={subcat}
+                      href={`/shop?category=${category.category_name.toLowerCase()}&subcategory=${subcat.toLowerCase()}`}
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        setOpenCategoryId(null);
+                      }}
+                      className={`block py-1.5 text-sm ${
+                        isActive('/shop', category.category_name.toLowerCase(), subcat.toLowerCase())
+                          ? 'text-[#000] font-medium'
+                          : 'text-gray-500 hover:text-[#000]'
+                      }`}
+                    >
+                      {subcat}
+                    </Link>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          ))}
           
           <Link 
            onClick={() => {setIsMobileMenuOpen(false)}}
@@ -574,9 +558,9 @@ export default function Navbar() {
           
           <Link 
            onClick={() => {setIsMobileMenuOpen(false)}}
-            href="/contact" 
+            href="/info?section=contact" 
             className={`block px-3 py-2 rounded-md text-base font-medium ${
-              isActive('/contact') 
+              isActive('/info?section=contact') 
                 ? 'bg-[#000]/10 text-[#000]' 
                 : 'text-gray-700 hover:bg-gray-50'
             }`}
@@ -606,14 +590,14 @@ export default function Navbar() {
                   <div className="mt-1 space-y-1">
                     <Link
                     
-                      href="/profile"
+                      href="/profile?tab=profile"
                       className="block text-sm text-gray-500 hover:text-[#000]"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       My Profile
                     </Link>
                     <Link
-                      href="/orders"
+                      href="/profile?tab=orders"
                       className="block text-sm text-gray-500 hover:text-[#000]"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -649,20 +633,22 @@ export default function Navbar() {
         
         {/* Mobile Search Box */}
         <div className="px-4 pt-2 pb-3">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#000] focus:border-transparent text-sm"
-            />
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+          <form onSubmit={handleSearch}>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#000] focus:border-transparent text-sm"
+              />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </header>
