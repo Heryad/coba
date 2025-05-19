@@ -139,19 +139,19 @@ export default function ProductDetailsPage() {
                                                 src={image}
                                                 alt={`Product view ${index + 1}`}
                                                 fill
-                                                className="object-cover"
+                                                className="object-contain lg:object-cover"
                                             />
                                         </button>
                                     ))}
                                 </div>
                                 
                                 {/* Main Image */}
-                                <div className="w-full relative aspect-square lg:aspect-auto lg:h-[600px] rounded-3xl overflow-hidden">
+                                <div className="w-full relative aspect-square h-[500px] lg:aspect-auto lg:h-[600px] rounded-2xl overflow-hidden">
                                     <Image
                                         src={product.images?.[selectedImage] || '/images/placeholder.jpg'}
                                         alt={product.name}
                                         fill
-                                        className={`object-cover transition-all duration-500 transform ${isVisible ? 'scale-100' : 'scale-105'}`}
+                                        className={`object-cover object-contain transition-all duration-500 transform ${isVisible ? 'scale-100' : 'scale-105'}`}
                                         priority
                                     />
                                 </div>
