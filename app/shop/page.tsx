@@ -381,7 +381,6 @@ function ShopContent() {
 
   return (
     <main className="bg-white min-h-screen">
-      <div className="bg-white rounded-t-[2.5rem]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Mobile Filter Button */}
           <button
@@ -480,8 +479,7 @@ function ShopContent() {
               )}
             </div>
           </div>
-        </div>
-      </div>    
+        </div> 
     </main>
   );
 }
