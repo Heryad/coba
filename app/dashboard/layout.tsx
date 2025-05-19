@@ -252,8 +252,12 @@ function LoginForm({ onSuccess }: { onSuccess: () => void }) {
 
     try {
       const result = await signInAdmin(email, password);
-      console.log('Login result:', result);
-      onSuccess();
+      if(result.success){
+        console.log('Login result:', result);
+        onSuccess();
+      }else{
+        setError('An error occurred during login')
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred during login');
     } finally {

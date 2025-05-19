@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/app/context/AuthContext';
 import Button from '@/app/components/Button';
@@ -56,7 +56,7 @@ interface OrderForCard {
   }[]; // Match OrderItem structure
 }
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const { user, loading } = useAuth();
   const { addToast } = useToast();
   const searchParams = useSearchParams();
@@ -417,5 +417,18 @@ export default function ProfilePage() {
         )}
       </div>
     </div>
+  );
+} 
+
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <ProfilePageContent />
+    </Suspense>
   );
 } 

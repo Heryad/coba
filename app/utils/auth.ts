@@ -12,7 +12,10 @@ export async function signInAdmin(email: string, password: string) {
     })
 
     if (authError) {
-      throw new Error('Invalid email or password')
+      return {
+        success: false,
+        error: authError instanceof Error ? authError.message : 'An unexpected error occurred'
+      }
     }
 
     if (!authData.user) {

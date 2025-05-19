@@ -15,7 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group relative h-full">
       <div className="aspect-h-4 aspect-w-3 w-full overflow-hidden rounded-lg bg-gray-100">
-        <div className="relative h-[400px] w-full">
+        <div className="relative h-[300px] lg:h-[600px] xl:h-[600px] w-full">
           <Link href={`/shop/details/${product.id}`} className="block h-full">
             <Image
               src={product.images[0] || '/images/placeholder.jpg'}
