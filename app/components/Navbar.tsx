@@ -164,16 +164,6 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex lg:items-center lg:space-x-8">
-            <Link 
-              href="/" 
-              className={`inline-flex items-center px-1 py-2 text-sm font-medium border-b-2 ${
-                isActive('/') 
-                  ? `${hasScrolled ? 'border-white text-white' : 'border-black text-gray-900'}` 
-                  : `border-transparent ${hasScrolled ? 'text-white/80 hover:text-white hover:border-white/60' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'}`
-              }`}
-            >
-              Home
-            </Link>
 
             {/* Shop Dropdown - Using hover on desktop */}
             <div className="relative flex space-x-4">
@@ -276,17 +266,6 @@ export default function Navbar() {
             >
               Ambassador Program
             </button>
-
-            <Link 
-              href="/info?section=contact" 
-              className={`inline-flex items-center px-1 py-2 text-sm font-medium border-b-2 ${
-                isActive('/info?section=contact') 
-                  ? `${hasScrolled ? 'border-white text-white' : 'border-black text-gray-900'}` 
-                  : `border-transparent ${hasScrolled ? 'text-white/80 hover:text-white hover:border-white/60' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'}`
-              }`}
-            >
-              Contact
-            </Link>
 
             {/* Search, Login and Cart */}
             <div className="hidden lg:flex items-center space-x-4">

@@ -469,7 +469,7 @@ function ShopContent() {
                   <p className="mt-1 text-sm text-gray-500">Try adjusting your filters.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
                   {filteredProducts.map(product => (
                     <div key={product.id}>
                       <ProductCard product={product} />
