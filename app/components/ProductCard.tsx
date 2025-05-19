@@ -41,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </Link>
           </h3>
           {hasDiscount ? (
-            <div>
+            <div className='flex flex-row gap-x-2'>
               <p className="text-sm font-medium text-gray-900">${discountedPrice.toLocaleString()}</p>
               <p className="text-sm text-gray-500 line-through">${product.price.toLocaleString()}</p>
             </div>
