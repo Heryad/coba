@@ -10,6 +10,7 @@ import { UserIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import { useToast } from '@/app/context/ToastContext';
 import { format } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
+import { useTheme } from '@/app/context/ThemeContext';
 
 
 // Define types to match fetched data and OrderItemCard props
@@ -56,15 +57,27 @@ interface OrderForCard {
   }[]; // Match OrderItem structure
 }
 
+interface Rating {
+  id: string;
+  stars: number;
+  description: string;
+  product_id: string;
+  user_id: string;
+  is_active: boolean;
+  created_at: string;
+}
+
 function ProfilePageContent() {
   const { user, loading } = useAuth();
   const { addToast } = useToast();
+  const { isDark } = useTheme();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
   const [isEditing, setIsEditing] = useState(false);
   const [refLink, setRefLink] = useState('');
   const [userOrders, setUserOrders] = useState<OrderForCard[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ratings, setRatings] = useState<Rating[]>([]);
 
   const [form, setForm] = useState({
     username: user?.username || '',
@@ -149,7 +162,7 @@ function ProfilePageContent() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: user.id }),
           });
-          const data: { orders?: FetchedOrder[], error?: string } = await res.json();
+          const data: { orders?: FetchedOrder[], ratings?: Rating[], error?: string } = await res.json();
           if (res.ok) {
             // Filter orders by supported statuses before mapping to the structure expected by OrderItemCard
             const formattedOrders: OrderForCard[] = (data.orders || [])
@@ -170,6 +183,7 @@ function ProfilePageContent() {
                 }))
               }));
             setUserOrders(formattedOrders);
+            setRatings(data.ratings || []);
           } else {
             addToast(data.error || 'Failed to fetch orders', 'error');
             setUserOrders([]);
@@ -189,57 +203,47 @@ function ProfilePageContent() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-white pb-12">
-        <div className="relative h-[300px] bg-gray-200 animate-pulse"></div>
+      <div className={`min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'} pb-12`}>
+        <div className={`relative h-[300px] ${isDark ? 'bg-gray-800' : 'bg-gray-200'} animate-pulse`}></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="border-b border-gray-200 mb-8 flex space-x-8">
-            <div className="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
-            <div className="h-6 w-24 bg-gray-200 rounded animate-pulse"></div>
+          <div className={`border-b ${isDark ? 'border-gray-700' : 'border-gray-200'} mb-8 flex space-x-8`}>
+            <div className={`h-6 w-24 ${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-200'} rounded animate-pulse`}></div>
+            <div className={`h-6 w-24 ${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-200'} rounded animate-pulse`}></div>
           </div>
 
           <div className="space-y-8">
-            <div className="bg-gray-100 rounded-xl p-6 animate-pulse">
+            <div className={`${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-100'} rounded-xl p-6 animate-pulse`}>
               <div className="flex justify-between items-center mb-6">
-                <div className="h-6 w-48 bg-gray-200 rounded"></div>
-                <div className="h-10 w-24 bg-gray-200 rounded"></div>
+                <div className={`h-6 w-48 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                <div className={`h-10 w-24 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
               </div>
               <div className="space-y-4">
-                <div className="h-4 w-32 bg-gray-200 rounded"></div>
-                <div className="h-10 w-full bg-gray-200 rounded"></div>
-                <div className="h-4 w-24 bg-gray-200 rounded"></div>
-                <div className="h-10 w-full bg-gray-200 rounded"></div>
-                <div className="h-4 w-36 bg-gray-200 rounded"></div>
-                <div className="h-10 w-full bg-gray-200 rounded"></div>
-              </div>
-            </div>
-
-            <div className="bg-gray-100 rounded-xl p-6 animate-pulse">
-              <div className="h-6 w-40 bg-gray-200 rounded mb-4"></div>
-              <div className="h-4 w-64 bg-gray-200 rounded mb-6"></div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1 h-10 bg-gray-200 rounded"></div>
-                <div className="h-10 w-24 bg-gray-200 rounded"></div>
+                <div className={`h-4 w-32 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                <div className={`h-10 w-full ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                <div className={`h-4 w-24 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                <div className={`h-10 w-full ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                <div className={`h-4 w-36 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                <div className={`h-10 w-full ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
               </div>
             </div>
 
             {[...Array(2)].map((_, index) => (
-              <div key={index} className="bg-gray-100 rounded-xl p-6 animate-pulse">
-                 <div className="flex justify-between items-center mb-4">
-                    <div className="h-6 w-32 bg-gray-200 rounded"></div>
-                    <div className="h-6 w-20 bg-gray-200 rounded"></div>
-                 </div>
-                 <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 bg-gray-200 rounded"></div>
-                    <div className="flex-1 space-y-2">
-                       <div className="h-4 w-3/4 bg-gray-200 rounded"></div>
-                       <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
-                    </div>
-                    <div className="h-4 w-12 bg-gray-200 rounded"></div>
-                 </div>
+              <div key={index} className={`${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-100'} rounded-xl p-6 animate-pulse`}>
+                <div className="flex justify-between items-center mb-4">
+                  <div className={`h-6 w-32 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                  <div className={`h-6 w-20 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className={`w-20 h-20 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                  <div className="flex-1 space-y-2">
+                    <div className={`h-4 w-3/4 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                    <div className={`h-4 w-1/2 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                  </div>
+                  <div className={`h-4 w-12 ${isDark ? 'bg-[#333]' : 'bg-gray-200'} rounded`}></div>
+                </div>
               </div>
             ))}
-
           </div>
         </div>
       </div>
@@ -247,7 +251,7 @@ function ProfilePageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
       {/* Profile Banner */}
       <div className="relative h-[300px] bg-gray-900">
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
@@ -276,14 +280,18 @@ function ProfilePageContent() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
-        <div className="border-b border-gray-200 mb-8">
+        <div className={`border-b ${isDark ? 'border-gray-700' : 'border-gray-200'} mb-8`}>
           <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => handleTabChange('profile')}
               className={`${
                 activeTab === 'profile'
-                  ? 'border-black text-gray-900'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? isDark 
+                    ? 'border-white text-white'
+                    : 'border-black text-gray-900'
+                  : isDark
+                    ? 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
             >
               Profile Details
@@ -292,8 +300,12 @@ function ProfilePageContent() {
               onClick={() => handleTabChange('orders')}
               className={`${
                 activeTab === 'orders'
-                  ? 'border-black text-gray-900'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? isDark 
+                    ? 'border-white text-white'
+                    : 'border-black text-gray-900'
+                  : isDark
+                    ? 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
             >
               Orders
@@ -305,9 +317,9 @@ function ProfilePageContent() {
         {activeTab === 'profile' ? (
           <div className="space-y-8">
             {/* Profile Information */}
-            <div className="bg-gray-100 rounded-md p-6">
+            <div className={`${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-100'} rounded-md p-6`}>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Profile Information</h2>
+                <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Profile Details</h2>
                 {isEditing ? (
                   <Button
                     variant="primary"
@@ -318,7 +330,7 @@ function ProfilePageContent() {
                   </Button>
                 ) : (
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => setIsEditing(true)}
                   >
                     Edit Profile
@@ -327,10 +339,10 @@ function ProfilePageContent() {
               </div>
               <div className="space-y-6">
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700">Username</label>
+                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Username</label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <UserIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      <UserIcon className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} aria-hidden="true" />
                     </div>
                     <input
                       name="username"
@@ -338,15 +350,19 @@ function ProfilePageContent() {
                       value={form.username}
                       onChange={handleInputChange}
                       disabled={!isEditing}
-                      className="block w-full rounded-md border-gray-300 focus:border-black focus:ring-black sm:text-sm disabled:bg-gray-50 h-12 pl-10 pr-2"
+                      className={`block w-full rounded-md focus:border-black focus:ring-black sm:text-sm h-12 pl-10 pr-2 ${
+                        isDark
+                          ? 'bg-[#333] border-gray-600 text-white disabled:bg-[#2A2A2A]'
+                          : 'bg-white border-gray-300 text-gray-900 disabled:bg-gray-50'
+                      }`}
                     />
                   </div>
                 </div>
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
-                   <div className="mt-1 relative rounded-md shadow-sm">
+                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Email</label>
+                  <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <EnvelopeIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      <EnvelopeIcon className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} aria-hidden="true" />
                     </div>
                     <input
                       name="email_address"
@@ -354,15 +370,19 @@ function ProfilePageContent() {
                       value={form.email_address}
                       onChange={handleInputChange}
                       disabled={true}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm disabled:bg-gray-50 h-12 pl-10 pr-2 cursor-not-allowed"
+                      className={`block w-full rounded-md focus:border-black focus:ring-black sm:text-sm h-12 pl-10 pr-2 cursor-not-allowed ${
+                        isDark
+                          ? 'bg-[#2A2A2A] border-gray-600 text-gray-400'
+                          : 'bg-gray-50 border-gray-300 text-gray-500'
+                      }`}
                     />
-                   </div>
+                  </div>
                 </div>
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-                   <div className="mt-1 relative rounded-md shadow-sm">
+                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Phone Number</label>
+                  <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <PhoneIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      <PhoneIcon className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} aria-hidden="true" />
                     </div>
                     <input
                       name="phone_number"
@@ -370,26 +390,33 @@ function ProfilePageContent() {
                       value={form.phone_number}
                       onChange={handleInputChange}
                       disabled={!isEditing}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm disabled:bg-gray-50 h-12 pl-10 pr-2"
+                      className={`block w-full rounded-md focus:border-black focus:ring-black sm:text-sm h-12 pl-10 pr-2 ${
+                        isDark
+                          ? 'bg-[#333] border-gray-600 text-white disabled:bg-[#2A2A2A]'
+                          : 'bg-white border-gray-300 text-gray-900 disabled:bg-gray-50'
+                      }`}
                     />
-                   </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Referral Program */}
-            <div className="bg-gray-100 rounded-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Referral Program</h2>
-              <p className="text-gray-600 mb-6">
+            <div className={`${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-100'} rounded-md p-6`}>
+              <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>Referral Program</h2>
+              <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
                 Invite your friends and earn 10% commission on their first purchase!
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                
                 <input
                   type="text"
                   readOnly
                   value={refLink}
-                  className="flex-1 rounded-md pl-2 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
+                  className={`flex-1 rounded-md pl-2 focus:border-black focus:ring-black sm:text-sm ${
+                    isDark
+                      ? 'bg-[#333] border-gray-600 text-gray-300'
+                      : 'bg-white border-gray-300 text-gray-900'
+                  }`}
                 />
                 <Button onClick={handleCopyInviteLink}>
                   Copy Link
@@ -400,17 +427,16 @@ function ProfilePageContent() {
         ) : (
           <div className="space-y-6">
             {ordersLoading ? (
-               // Skeleton for orders loading
               [...Array(3)].map((_, index) => (
-                <div key={index} className="bg-gray-100 rounded-xl p-6 animate-pulse h-48"></div>
+                <div key={index} className={`${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-100'} rounded-xl p-6 animate-pulse h-48`}></div>
               ))
             ) : userOrders.length > 0 ? (
               userOrders.map((order) => (
-                <OrderItemCard key={order.id} order={order} />
+                <OrderItemCard key={order.id} order={order} ratings={ratings} />
               ))
             ) : (
               <div className="text-center py-10">
-                <p className="text-gray-500">No orders found.</p>
+                <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No orders found.</p>
               </div>
             )}
           </div>
@@ -422,10 +448,12 @@ function ProfilePageContent() {
 
 
 export default function ProfilePage() {
+  const { isDark } = useTheme();
+  
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      <div className={`flex items-center justify-center min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
+        <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${isDark ? 'border-white' : 'border-gray-900'}`}></div>
       </div>
     }>
       <ProfilePageContent />

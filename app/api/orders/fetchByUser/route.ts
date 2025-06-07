@@ -20,7 +20,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ orders });
+    const {data: ratings, error: ratingsError} = await supabase
+      .from('ratings')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (ratingsError) {
+      console.error('Error fetching ratings:', ratingsError); 
+    }
+
+    return NextResponse.json({ orders, ratings });
 
   } catch (err) {
     console.error('Unexpected error fetching orders:', err);

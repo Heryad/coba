@@ -1,6 +1,9 @@
+'use client'
+
 import { useState } from 'react';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline';
+import { useTheme } from '../context/ThemeContext';
 
 interface RatingModalProps {
   isOpen: boolean;
@@ -14,6 +17,7 @@ export default function RatingModal({ isOpen, onClose, onSubmit, productName, is
   const [stars, setStars] = useState(0);
   const [description, setDescription] = useState('');
   const [hoveredStar, setHoveredStar] = useState(0);
+  const { isDark } = useTheme();
 
   if (!isOpen) return null;
 
@@ -27,8 +31,8 @@ export default function RatingModal({ isOpen, onClose, onSubmit, productName, is
 
   return (
     <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-300 ease-in-out">
-      <div className="bg-white p-6 w-full max-w-md rounded-xl shadow-lg transform transition-all duration-300 ease-out scale-100 opacity-100">
-        <h2 className="text-xl font-semibold mb-4">Rate: {productName}</h2>
+      <div className={`${isDark ? 'bg-gray-900' : 'bg-white'} p-6 w-full max-w-md rounded-xl shadow-lg transform transition-all duration-300 ease-out scale-100 opacity-100`}>
+        <h2 className={`text-xl font-semibold mb-4 ${isDark ? 'text-white' : 'text-black'}`}>Rate: {productName}</h2>
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -50,20 +54,21 @@ export default function RatingModal({ isOpen, onClose, onSubmit, productName, is
                 </button>
               ))}
             </div>
-            <p className="text-sm text-gray-500">
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
               {stars === 0 ? 'Select a rating' : `${stars} star${stars > 1 ? 's' : ''}`}
             </p>
           </div>
 
           <div className="mb-4">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="description" className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-1`}>
               Your Review
             </label>
             <textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 
+                ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-black'}`}
               rows={4}
               placeholder="Share your experience with this product..."
             />
@@ -73,18 +78,19 @@ export default function RatingModal({ isOpen, onClose, onSubmit, productName, is
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-200"
+              className={`px-4 py-2 text-sm font-medium rounded-md ${isDark ? 'text-white hover:bg-gray-800' : 'text-gray-700 hover:bg-gray-100'} transition-colors duration-200`}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={stars === 0 || isSubmitting}
-              className="px-4 py-2 text-sm font-medium text-white bg-black hover:bg-black/80 rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[120px] justify-center transition-all duration-200"
+              className={`px-4 py-2 text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 min-w-[120px] justify-center transition-all duration-200
+                ${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-black/80'}`}
             >
               {isSubmitting ? (
                 <>
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>

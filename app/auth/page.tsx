@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Button from '../components/Button';
+import { useTheme } from '../context/ThemeContext';
 
 export default function AuthPage() {
     const { signIn, signUp, signInWithGoogle, user } = useAuth();
@@ -11,6 +12,7 @@ export default function AuthPage() {
     const [isSignIn, setIsSignIn] = useState(true);
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { isDark } = useTheme();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -62,18 +64,18 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className={`min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'} flex flex-col justify-center py-12 sm:px-6 lg:px-8`}>
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                <h2 className={`mt-6 text-center text-3xl font-extrabold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {isSignIn ? 'Sign in to your account' : 'Create your account'}
                 </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
+                <p className={`mt-2 text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     {isSignIn ? (
                         <>
                             Or{' '}
                             <button
                                 onClick={() => setIsSignIn(false)}
-                                className="font-bold text-[#000] hover:text-black/80"
+                                className={`font-bold ${isDark ? 'text-white hover:text-gray-200' : 'text-[#000] hover:text-black/80'}`}
                             >
                                 create a new account
                             </button>
@@ -83,7 +85,7 @@ export default function AuthPage() {
                             Already have an account?{' '}
                             <button
                                 onClick={() => setIsSignIn(true)}
-                                className="font-bold text-[#000] hover:text-black/80"
+                                className={`font-bold ${isDark ? 'text-white hover:text-gray-200' : 'text-[#000] hover:text-black/80'}`}
                             >
                                 Sign in
                             </button>
@@ -93,11 +95,11 @@ export default function AuthPage() {
             </div>
 
             <div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <div className={`${isDark ? 'bg-[#222] border border-gray-700' : 'bg-white'} py-8 px-4 shadow sm:rounded-lg sm:px-10`}>
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {!isSignIn && (
                             <div>
-                                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="username" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
                                     Username
                                 </label>
                                 <div className="mt-1">
@@ -108,14 +110,18 @@ export default function AuthPage() {
                                         required
                                         value={formData.username}
                                         onChange={handleInputChange}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#009450] focus:border-[#009450] sm:text-sm"
+                                        className={`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#009450] focus:border-[#009450] sm:text-sm ${
+                                            isDark 
+                                                ? 'bg-gray-800 border-gray-600 text-white' 
+                                                : 'bg-white border-gray-300 text-gray-900'
+                                        }`}
                                     />
                                 </div>
                             </div>
                         )}
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="email" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
                                 Email address
                             </label>
                             <div className="mt-1">
@@ -127,13 +133,17 @@ export default function AuthPage() {
                                     required
                                     value={formData.email}
                                     onChange={handleInputChange}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#009450] focus:border-[#009450] sm:text-sm"
+                                    className={`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#009450] focus:border-[#009450] sm:text-sm ${
+                                        isDark 
+                                            ? 'bg-gray-800 border-gray-600 text-white' 
+                                            : 'bg-white border-gray-300 text-gray-900'
+                                    }`}
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="password" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
                                 Password
                             </label>
                             <div className="mt-1">
@@ -145,7 +155,11 @@ export default function AuthPage() {
                                     required
                                     value={formData.password}
                                     onChange={handleInputChange}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#009450] focus:border-[#009450] sm:text-sm"
+                                    className={`appearance-none block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#009450] focus:border-[#009450] sm:text-sm ${
+                                        isDark 
+                                            ? 'bg-gray-800 border-gray-600 text-white' 
+                                            : 'bg-white border-gray-300 text-gray-900'
+                                    }`}
                                 />
                             </div>
                         </div>
@@ -155,7 +169,7 @@ export default function AuthPage() {
                                 type="submit"
                                 disabled={isLoading}
                                 variant='primary'
-                                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium  ${
+                                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium ${
                                     isLoading ? 'opacity-75 cursor-not-allowed' : ''
                                 }`}
                             >
@@ -177,10 +191,10 @@ export default function AuthPage() {
                     <div className="mt-6">
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-gray-300" />
+                                <div className={`w-full border-t ${isDark ? 'border-gray-700' : 'border-gray-300'}`} />
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                                <span className={`px-2 ${isDark ? 'bg-[#222] text-gray-400' : 'bg-white text-gray-500'}`}>Or continue with</span>
                             </div>
                         </div>
 
@@ -188,13 +202,15 @@ export default function AuthPage() {
                             <button
                                 onClick={handleGoogleSignIn}
                                 disabled={isLoading}
-                                className={`w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${
-                                    isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                                }`}
+                                className={`w-full inline-flex justify-center py-2 px-4 border rounded-md shadow-sm text-sm font-medium ${
+                                    isDark 
+                                        ? 'bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700' 
+                                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                } ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
                             >
                                 {isLoading ? (
                                     <div className="flex items-center">
-                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <svg className={`animate-spin -ml-1 mr-3 h-5 w-5 ${isDark ? 'text-gray-200' : 'text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>

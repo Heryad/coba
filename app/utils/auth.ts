@@ -32,7 +32,7 @@ export async function signInAdmin(email: string, password: string) {
     if (adminError) {
       // If there's an error checking admin status, sign out the user
       await supabase.auth.signOut()
-      throw new Error('Error verifying admin status')
+      throw new Error('Error verifying admin status', adminError)
     }
 
     if (!adminData) {

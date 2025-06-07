@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useToast } from '../context/ToastContext';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Toast() {
     const { toasts, removeToast } = useToast();
+    const { isDark } = useTheme();
     const [isVisible, setIsVisible] = useState(false);
 
     // CSS keyframes for entry animation
@@ -40,18 +42,24 @@ export default function Toast() {
                 <div
                     key={toast.id}
                     className={`min-w-[300px] p-4 rounded-md shadow-lg transform
-                        ${toast.type === 'success' ? 'bg-[#000]' : 
-                          toast.type === 'error' ? 'bg-red-500' : 
-                          'bg-blue-500'} 
-                        text-white
+                        ${toast.type === 'success' 
+                            ? isDark 
+                                ? 'bg-white text-black' 
+                                : 'bg-black text-white'
+                            : toast.type === 'error' 
+                                ? 'bg-red-500 text-white' 
+                                : isDark 
+                                    ? 'bg-white text-black' 
+                                    : 'bg-black text-white'
+                        }
                     `}
-                    style={{ animation: 'slideInFromBottom 0.3s ease-out forwards' }} // Apply animation
+                    style={{ animation: 'slideInFromBottom 0.3s ease-out forwards' }}
                 >
                     <div className="flex items-center justify-between">
                         <p className="font-medium">{toast.message}</p>
                         <button
                             onClick={() => removeToast(toast.id)}
-                            className="ml-4 text-white hover:text-gray-200 transition-colors"
+                            className={`ml-4 ${isDark ? 'hover:text-gray-700' : 'hover:text-gray-200'} transition-colors`}
                         >
                             <svg
                                 className="w-5 h-5"

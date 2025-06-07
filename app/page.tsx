@@ -13,10 +13,12 @@ import {
   CategorySkeleton,
   OfferSkeleton
 } from "@/app/components/skeletons";
+import { useTheme } from './context/ThemeContext';
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('NEW ARRIVALS');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const { isDark } = useTheme();
 
   // Get data from context provider
   const { data, isLoading, error } = useData();
@@ -104,9 +106,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow bg-white">
+      <main className={`flex-grow ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
         {/* Hero Section */}
-        <section className="relative min-h-[700px]">
+        <section className={`relative min-h-[700px] ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
           {isLoading ? (
             <HeroSkeleton />
           ) : (
@@ -124,20 +126,21 @@ export default function Home() {
                   <div className="absolute inset-0 bg-black/60" />
                 </div>
               )}
-              
+
               <div className="relative z-10 gap-8 items-center h-full py-[200px] px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto top-40">
                 <div className="space-y-6">
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                  <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight ${isDark ? 'text-white' : 'text-black'}`}>
                     {topBanners && topBanners.length > 0 && topBanners[0].title ? topBanners[0].title : 'Discover and Find Your Own Fashion!'}
                   </h1>
-                  <p className="text-lg text-white/90">
+                  <p className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                     Explore our curated collection of stylish clothing and accessories tailored to your unique taste.
                   </p>
-                  <Link href="/shop">
-                    <Button size="lg" variant="primary">
-                      EXPLORE NOW
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="primary"
+                    className="mt-4"
+                  >
+                    Shop Now
+                  </Button>
                 </div>
                 {/* Dots or other decorations */}
                 <div className="absolute bottom-8 right-8">
@@ -153,64 +156,74 @@ export default function Home() {
         </section>
 
         {/* Best Selling Section */}
-        <section className="py-12 px-4 sm:px-6 lg:px-5 mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900">Best selling</h2>
-              <p className="mt-4 text-gray-600">Get in on the trend with our curated selection of best-selling styles</p>
+        <section className={`py-12 px-4 sm:px-6 lg:px-5 mx-auto ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
+          <div className="text-center mb-12">
+            <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Best selling</h2>
+            <p className={`mt-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Get in on the trend with our curated selection of best-selling styles</p>
+          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[...Array(4)].map((_, index) => (
+                <ProductCardSkeleton key={index} />
+              ))}
             </div>
-            {isLoading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {[...Array(4)].map((_, index) => (
-                  <ProductCardSkeleton key={index} />
-                ))}
-              </div>
-            ) : data.products && data.products.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {data.products.slice(0, 4).map((product) => (
-                  <div key={product.id}>
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-10">
-                <p className="text-gray-500">No products available.</p>
-              </div>
-            )}
-            <div className="text-center mt-8">
-              <Link href="/shop">
-                <Button variant="outline">See all</Button>
-              </Link>
+          ) : data.products && data.products.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {data.products.slice(0, 4).map((product) => (
+                <div key={product.id}>
+                  <ProductCard product={product} />
+                </div>
+              ))}
             </div>
+          ) : (
+            <div className="text-center py-10">
+              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No products available.</p>
+            </div>
+          )}
+          <div className="text-center mt-8">
+            <Link href="/shop" className="flex justify-center">
+              <Button variant="secondary">See all</Button>
+            </Link>
+          </div>
         </section>
 
         {/* Products Section (Filtered Products) */}
-        <section className="py-12 px-4 sm:px-6 lg:px-5 mx-auto">
+        <section className={`py-8 px-2 sm:px-3 lg:px-3 mx-auto ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
           <div className="flex justify-center gap-8 mb-12">
-            <button
-              className={`transition-all duration-300 ${activeFilter === 'NEW ARRIVALS' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
-              onClick={() => setActiveFilter('NEW ARRIVALS')}
-            >
-              NEW ARRIVALS
-            </button>
-            <button
-              className={`transition-all duration-300 ${activeFilter === 'SALE' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
-              onClick={() => setActiveFilter('SALE')}
-            >
-              SALE
-            </button>
-            <button
-              className={`transition-all duration-300 ${activeFilter === 'HOT' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
-              onClick={() => setActiveFilter('HOT')}
-            >
-              HOT
-            </button>
-            <button
-              className={`transition-all duration-300 ${activeFilter === 'DISCOUNTS' ? 'text-gray-900 font-medium border-b-2 border-gray-900' : 'text-gray-500 hover:text-gray-900'}`}
-              onClick={() => setActiveFilter('DISCOUNTS')}
-            >
-              DISCOUNTS
-            </button>
+            <div className="flex justify-center gap-8 mb-12">
+              <button
+                className={`transition-all duration-300 ${activeFilter === 'NEW ARRIVALS' 
+                  ? `${isDark ? 'text-white font-medium border-b-2 border-white' : 'text-gray-900 font-medium border-b-2 border-gray-900'}` 
+                  : `${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}`}
+                onClick={() => setActiveFilter('NEW ARRIVALS')}
+              >
+                NEW ARRIVALS
+              </button>
+              <button
+                className={`transition-all duration-300 ${activeFilter === 'SALE' 
+                  ? `${isDark ? 'text-white font-medium border-b-2 border-white' : 'text-gray-900 font-medium border-b-2 border-gray-900'}` 
+                  : `${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}`}
+                onClick={() => setActiveFilter('SALE')}
+              >
+                SALE
+              </button>
+              <button
+                className={`transition-all duration-300 ${activeFilter === 'HOT' 
+                  ? `${isDark ? 'text-white font-medium border-b-2 border-white' : 'text-gray-900 font-medium border-b-2 border-gray-900'}` 
+                  : `${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}`}
+                onClick={() => setActiveFilter('HOT')}
+              >
+                HOT
+              </button>
+              <button
+                className={`transition-all duration-300 ${activeFilter === 'DISCOUNTS' 
+                  ? `${isDark ? 'text-white font-medium border-b-2 border-white' : 'text-gray-900 font-medium border-b-2 border-gray-900'}` 
+                  : `${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}`}
+                onClick={() => setActiveFilter('DISCOUNTS')}
+              >
+                DISCOUNTS
+              </button>
+            </div>
           </div>
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -228,60 +241,56 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className="text-gray-500">No products available for this filter.</p>
+              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No products available for this filter.</p>
             </div>
           )}
 
-            <div className="text-center mt-8">
-              <Link href="/shop">
-                <Button variant="outline">See all</Button>
-              </Link>
-            </div>
+          <div className="text-center mt-8">
+            <Link href="/shop" className="flex justify-center">
+              <Button variant="secondary">See all</Button>
+            </Link>
+          </div>
         </section>
 
         {/* Exclusive Offer Section */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <section className={`py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
           {isLoading ? (
             <OfferSkeleton />
           ) : exclusiveBanner ? (
-            <div className="bg-[#000]/10 rounded-3xl p-8 lg:p-12">
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div className="space-y-6">
-                  <h2 className="text-3xl font-bold text-gray-900">
-                    {exclusiveBanner.title}
-                  </h2>
-                  <p className="text-gray-600">
-                    Unlock the exclusive style right now! Get 10% off on new arrivals.
-                  </p>
-                  <div className="bg-[#009450]/5 p-6 rounded-xl inline-block">
-                    <Timer />
-                  </div>
-                  <Link href="/shop">
-                    <Button size="lg" variant="primary" className="ml-6">
-                      SHOP NOW
-                    </Button>
-                  </Link>
-                </div>
-                <div className="relative h-[400px]">
-                  <Image
-                    src={exclusiveBanner.image}
-                    alt="Exclusive offer"
-                    fill
-                    className="object-cover rounded-3xl"
-                  />
-                </div>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="space-y-6">
+                <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
+                  {exclusiveBanner.title}
+                </h2>
+                <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  Unlock the exclusive style right now! Get 10% off on new arrivals.
+                </p>
+                <Button
+                  variant="primary"
+                  className="mt-4"
+                >
+                  Shop Now
+                </Button>
+              </div>
+              <div className="relative h-[400px]">
+                <Image
+                  src={exclusiveBanner.image}
+                  alt="Exclusive offer"
+                  fill
+                  className="object-cover rounded-3xl"
+                />
               </div>
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className="text-gray-500">No exclusive offers available at this time.</p>
+              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No exclusive offers available at this time.</p>
             </div>
           )}
         </section>
 
         {/* Categories Section */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+        <section className={`py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
+          <h2 className={`text-3xl font-bold text-center mb-12 ${isDark ? 'text-white' : 'text-black'}`}>
             Designer Clothes For You
           </h2>
           {isLoading ? (
@@ -301,8 +310,8 @@ export default function Home() {
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/40 p-6 flex flex-col justify-end">
-                    <h3 className="text-white text-xl font-bold">{category.name}</h3>
-                    <p className="text-white/80 mt-2">
+                    <h3 className={`text-white text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>{category.name}</h3>
+                    <p className={`text-white/80 mt-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                       {category.subcategories && category.subcategories.length > 0
                         ? `${category.subcategories.length} subcategories available`
                         : 'Explore our collection'}
@@ -313,7 +322,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className="text-gray-500">No categories available.</p>
+              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No categories available.</p>
             </div>
           )}
         </section>

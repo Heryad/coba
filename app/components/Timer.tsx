@@ -1,4 +1,7 @@
+'use client'
+
 import { useEffect, useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 interface TimerProps {
   initialHours?: number;
@@ -16,6 +19,7 @@ export default function Timer({
     minutes: initialMinutes,
     seconds: initialSeconds
   });
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,22 +43,22 @@ export default function Timer({
   return (
     <div className="flex gap-4 items-center">
       <div className="flex flex-col items-center">
-        <div className="bg-black/70 text-white rounded-lg p-3 min-w-[60px] text-center">
+        <div className={`${isDark ? 'bg-white text-black' : 'bg-black text-white'} rounded-lg p-3 min-w-[60px] text-center`}>
           <span className="text-2xl font-bold">{formatNumber(time.hours)}</span>
         </div>
-        <span className="text-xs mt-1 text-gray-600">HRS</span>
+        <span className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>HRS</span>
       </div>
       <div className="flex flex-col items-center">
-        <div className="bg-black/70 text-white rounded-lg p-3 min-w-[60px] text-center">
+        <div className={`${isDark ? 'bg-white text-black' : 'bg-black text-white'} rounded-lg p-3 min-w-[60px] text-center`}>
           <span className="text-2xl font-bold">{formatNumber(time.minutes)}</span>
         </div>
-        <span className="text-xs mt-1 text-gray-600">MIN</span>
+        <span className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>MIN</span>
       </div>
       <div className="flex flex-col items-center">
-        <div className="bg-black/70 text-white rounded-lg p-3 min-w-[60px] text-center">
+        <div className={`${isDark ? 'bg-white text-black' : 'bg-black text-white'} rounded-lg p-3 min-w-[60px] text-center`}>
           <span className="text-2xl font-bold">{formatNumber(time.seconds)}</span>
         </div>
-        <span className="text-xs mt-1 text-gray-600">SEC</span>
+        <span className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>SEC</span>
       </div>
     </div>
   );

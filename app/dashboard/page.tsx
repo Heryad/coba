@@ -437,7 +437,7 @@ export default function DashboardPage() {
           setRecentOrders(formattedOrders);
         }
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        //console.error('Error fetching dashboard data:', error);
       } finally {
         // Remove the timeout to make the dashboard respond faster
         setIsLoading(false);

@@ -5,16 +5,19 @@ import { useParams } from "next/navigation";
 import { useData } from "@/app/context/DataProvider";
 import { useCart } from "@/app/context/CartContext";
 import { useToast } from "@/app/context/ToastContext";
+import { useTheme } from '@/app/context/ThemeContext';
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "@/app/components/Button";
+import ProductCard from "@/app/components/ProductCard";
 
 export default function ProductDetailsPage() {
     const { id } = useParams();
     const { data, isLoading, error } = useData();
     const { addToCart, cartItems } = useCart();
     const { addToast } = useToast();
+    const { isDark } = useTheme();
     const product = data?.products.find((product) => product.id === id);
 
     const [selectedImage, setSelectedImage] = useState(0);
@@ -98,15 +101,19 @@ export default function ProductDetailsPage() {
     // Error state
     if (error) {
         return (
-            <main className="flex h-screen bg-white pt-16 items-center justify-center">
-                <div className="bg-white rounded-t-[2.5rem]">
+            <main className={`flex h-screen ${isDark ? 'bg-[#222]' : 'bg-white'} pt-16 items-center justify-center`}>
+                <div className={`${isDark ? 'bg-[#222]' : 'bg-white'} rounded-t-[2.5rem]`}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="text-center py-16">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Product</h2>
-                            <p className="text-gray-600 mb-8">{error.message}</p>
+                            <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>Error Loading Product</h2>
+                            <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-8`}>{error.message}</p>
                             <button 
                                 onClick={() => window.history.back()}
-                                className="px-6 py-3 bg-[#000] text-white rounded-md hover:bg-black-90 transition-all duration-300"
+                                className={`px-6 py-3 rounded-md transition-all duration-300 ${
+                                    isDark 
+                                        ? 'bg-white text-black hover:bg-gray-200'
+                                        : 'bg-[#000] text-white hover:bg-black/90'
+                                }`}
                             >
                                 Back to Shop
                             </button>
@@ -118,8 +125,8 @@ export default function ProductDetailsPage() {
     }
 
     return (
-        <main className="min-h-screen bg-white">
-            <div className="bg-white rounded-t-[2.5rem]">
+        <main className={`min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
+            <div className={`${isDark ? 'bg-[#222]' : 'bg-white'} rounded-t-[2.5rem]`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     {isLoading ? (
                         <ProductDetailsSkeleton />
@@ -133,7 +140,11 @@ export default function ProductDetailsPage() {
                                         <button
                                             key={index}
                                             onClick={() => setSelectedImage(index)}
-                                            className={`relative min-w-[5rem] w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 transform hover:scale-105 ${selectedImage === index ? 'border-[#000]' : 'border-transparent'}`}
+                                            className={`relative min-w-[5rem] w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 transform hover:scale-105 ${
+                                                selectedImage === index 
+                                                    ? isDark ? 'border-white' : 'border-[#000]'
+                                                    : 'border-transparent'
+                                            }`}
                                         >
                                             <Image
                                                 src={image}
@@ -159,18 +170,18 @@ export default function ProductDetailsPage() {
 
                             {/* Product Info */}
                             <div className={`flex flex-col transition-all duration-700 delay-300 transform ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'}`}>
-                                <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+                                <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{product.name}</h1>
                                 
                                 {/* Rating */}
                                 <div className={`mt-4 flex items-center gap-2 transition-all duration-500 delay-400 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                                     <div className="flex">
                                         {[...Array(5)].map((_, i) => (
-                                            <span key={i} className={`transition-colors duration-300 ${i < Math.floor(product.review || 0) ? 'text-yellow-400' : 'text-gray-200'}`}>
+                                            <span key={i} className={`transition-colors duration-300 ${i < Math.floor(product.review || 0) ? 'text-yellow-400' : isDark ? 'text-gray-600' : 'text-gray-200'}`}>
                                                 ★
                                             </span>
                                         ))}
                                     </div>
-                                    <span className="text-sm text-gray-600">
+                                    <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                                         {product.review?.toFixed(1)} ({product.review > 0 ? 'reviews' : 'No reviews yet'})
                                     </span>
                                 </div>
@@ -180,36 +191,38 @@ export default function ProductDetailsPage() {
                                     {product.discount > 0 ? (
                                         <div className="flex items-center gap-2">
                                             <p className="text-2xl font-bold text-[#009450]">${product.final_price?.toFixed(2)}</p>
-                                            <p className="text-lg text-gray-500 line-through">${product.price?.toFixed(2)}</p>
+                                            <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-500'} line-through`}>${product.price?.toFixed(2)}</p>
                                             <span className="bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
                                                 {product.discount}% OFF
                                             </span>
                                         </div>
                                     ) : (
-                                        <p className="text-2xl font-bold text-gray-900">${product.price?.toFixed(2)}</p>
+                                        <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>${product.price?.toFixed(2)}</p>
                                     )}
                                 </div>
 
                                 {/* Description */}
                                 <div className={`mt-6 transition-all duration-500 delay-600 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                                    <h2 className="text-sm font-medium text-gray-900">Description</h2>
-                                    <p className="mt-2 text-gray-600">{product.description}</p>
+                                    <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>Description</h2>
+                                    <p className={`mt-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{product.description}</p>
                                 </div>
 
                                 {/* Colors */}
                                 {product.colors && product.colors.length > 0 && (
                                     <div className={`mt-8 transition-all duration-500 delay-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                                        <h2 className="text-sm font-medium text-gray-900">Color</h2>
+                                        <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>Color</h2>
                                         <div className="mt-3 flex gap-3">
                                             {formatColors(product.colors).map((color, index) => (
                                                 <button
                                                     key={color.name}
                                                     onClick={() => setSelectedColor(index)}
-                                                    className={`relative w-8 h-8 rounded-full transition-transform duration-200 hover:scale-110 ${color.border ? 'border border-gray-300' : ''}`}
+                                                    className={`relative w-8 h-8 rounded-full transition-transform duration-200 hover:scale-110 ${
+                                                        color.border ? isDark ? 'border border-gray-600' : 'border border-gray-300' : ''
+                                                    }`}
                                                     style={{ backgroundColor: color.value }}
                                                 >
                                                     {selectedColor === index && (
-                                                        <span className="absolute inset-0 rounded-full ring-2 ring-[#000] transition-opacity duration-200" />
+                                                        <span className={`absolute inset-0 rounded-full ring-2 ${isDark ? 'ring-white' : 'ring-[#000]'} transition-opacity duration-200`} />
                                                     )}
                                                     <span className="sr-only">{color.name}</span>
                                                 </button>
@@ -222,8 +235,8 @@ export default function ProductDetailsPage() {
                                 {product.sizes && product.sizes.length > 0 && (
                                     <div className={`mt-8 transition-all duration-500 delay-800 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                                         <div className="flex items-center justify-between">
-                                            <h2 className="text-sm font-medium text-gray-900">Size</h2>
-                                            <button className="text-sm font-medium text-[#000] hover:text-black/80 transition-colors duration-200">
+                                            <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>Size</h2>
+                                            <button className={`text-sm font-medium ${isDark ? 'text-gray-200 hover:text-white' : 'text-[#000] hover:text-black/80'} transition-colors duration-200`}>
                                                 Size guide
                                             </button>
                                         </div>
@@ -232,10 +245,8 @@ export default function ProductDetailsPage() {
                                                 <Button
                                                     key={size}
                                                     onClick={() => setSelectedSize(size)}
-                                                    className={`flex items-center justify-center rounded-md border py-2 text-sm font-medium transition-all duration-200 transform hover:scale-105
-                                                        ${selectedSize === size
-                                                            ? 'border-[#FFF] bg-[#000] text-white'
-                                                            : 'bg-white !text-black border-black'}`}
+                                                    variant="size"
+                                                    isSelected={selectedSize === size}
                                                 >
                                                     {size}
                                                 </Button>
@@ -246,21 +257,33 @@ export default function ProductDetailsPage() {
 
                                 {/* Quantity */}
                                 <div className={`mt-8 transition-all duration-500 delay-800 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                                    <h2 className="text-sm font-medium text-gray-900 mb-3">Quantity</h2>
-                                    <div className="flex items-center w-32 h-10 border border-gray-300 rounded-xl">
+                                    <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-3`}>Quantity</h2>
+                                    <div className={`flex items-center w-32 h-10 rounded-xl ${
+                                        isDark 
+                                            ? 'border-gray-600 bg-[#333]' 
+                                            : 'border border-gray-300'
+                                    }`}>
                                         <button
                                             onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                                            className="flex-1 h-full flex items-center justify-center text-gray-500 hover:text-gray-700"
+                                            className={`flex-1 h-full flex items-center justify-center ${
+                                                isDark 
+                                                    ? 'text-gray-400 hover:text-gray-200'
+                                                    : 'text-gray-500 hover:text-gray-700'
+                                            }`}
                                             aria-label="Decrease quantity"
                                         >
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                                             </svg>
                                         </button>
-                                        <span className="flex-1 text-center font-medium">{quantity}</span>
+                                        <span className={`flex-1 text-center font-medium ${isDark ? 'text-white' : ''}`}>{quantity}</span>
                                         <button
                                             onClick={() => setQuantity(prev => prev + 1)}
-                                            className="flex-1 h-full flex items-center justify-center text-gray-500 hover:text-gray-700"
+                                            className={`flex-1 h-full flex items-center justify-center ${
+                                                isDark 
+                                                    ? 'text-gray-400 hover:text-gray-200'
+                                                    : 'text-gray-500 hover:text-gray-700'
+                                            }`}
                                             aria-label="Increase quantity"
                                         >
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -276,8 +299,13 @@ export default function ProductDetailsPage() {
                                         onClick={handleAddToCart}
                                         className={`w-full h-14 rounded-md font-medium transition-all duration-300 transform
                                             ${isInCart 
-                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed border border-gray-200' 
-                                                : 'bg-[#000] text-white hover:bg-black/90 hover:scale-[1.02] shadow-lg shadow-[#009450]/20'}`}
+                                                ? isDark
+                                                    ? 'bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600'
+                                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed border border-gray-200'
+                                                : isDark
+                                                    ? 'bg-white text-black hover:bg-gray-200 hover:scale-[1.02] shadow-lg shadow-white/20'
+                                                    : 'bg-[#000] text-white hover:bg-black/90 hover:scale-[1.02] shadow-lg shadow-[#009450]/20'
+                                            }`}
                                         disabled={isInCart}
                                     >
                                         <div className="flex items-center justify-center gap-2">
@@ -302,7 +330,11 @@ export default function ProductDetailsPage() {
                                     {isInCart && (
                                         <Link 
                                             href="/checkout"
-                                            className="w-full h-14 rounded-md font-medium bg-black text-[#FFF] hover:bg-black/90 hover:text-white transition-all duration-300 transform flex items-center justify-center gap-2 shadow-lg shadow-[#009450]/10"
+                                            className={`w-full h-14 rounded-md font-medium transition-all duration-300 transform flex items-center justify-center gap-2 shadow-lg ${
+                                                isDark
+                                                    ? 'bg-white text-black hover:bg-gray-200 shadow-white/10'
+                                                    : 'bg-black text-[#FFF] hover:bg-black/90 shadow-[#009450]/10'
+                                            }`}
                                         >
                                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -311,6 +343,26 @@ export default function ProductDetailsPage() {
                                         </Link>
                                     )}
                                 </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Similar Products Section */}
+                    {product && !isLoading && (
+                        <div className={`mt-24 transition-all duration-700 delay-500 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                            <h2 className={`text-2xl font-bold mb-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>Similar Products</h2>
+                            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                                {data.products
+                                    .filter(p => 
+                                        p.id !== product.id && // Exclude current product
+                                        (p.category === product.category || p.subcategory === product.subcategory)
+                                    )
+                                    .slice(0, 3) // Show only 4 similar products
+                                    .map(similarProduct => (
+                                        <div key={similarProduct.id}>
+                                            <ProductCard product={similarProduct} />
+                                        </div>
+                                    ))}
                             </div>
                         </div>
                     )}

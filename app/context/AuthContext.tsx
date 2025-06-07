@@ -69,8 +69,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(data);
             console.log(data)
         } catch (error) {
-            console.error('Error fetching user data:', error);
-            addToast('Error fetching user data', 'error');
+           // console.error('Error fetching user data:', error);
+            //addToast('Error fetching user data', 'error');
+
+            //todo: handle error
         }
     };
 

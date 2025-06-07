@@ -1,16 +1,19 @@
 'use client';
 import Link from 'next/link';
+import { useTheme } from '@/app/context/ThemeContext';
 
 export default function EmailVerifyPage() {
+  const { isDark } = useTheme();
+  
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md shadow-2xl border rounded-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+    <div className={`min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'} flex flex-col justify-center py-12 sm:px-6 lg:px-8`}>
+      <div className={`mt-8 sm:mx-auto sm:w-full sm:max-w-md shadow-2xl rounded-md ${isDark ? 'border-gray-700' : 'border'}`}>
+        <div className={`${isDark ? 'bg-[#222]' : 'bg-white'} py-8 px-4 shadow sm:rounded-lg sm:px-10`}>
           <div className="text-center">
             {/* Email Icon */}
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-[#009450]/10">
+            <div className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${isDark ? 'bg-[#009450]/20' : 'bg-[#009450]/10'}`}>
               <svg 
-                className="h-6 w-6 text-[#000]" 
+                className={`h-6 w-6 ${isDark ? 'text-[#009450]' : 'text-[#000]'}`}
                 fill="none" 
                 viewBox="0 0 24 24" 
                 stroke="currentColor"
@@ -24,16 +27,16 @@ export default function EmailVerifyPage() {
               </svg>
             </div>
 
-            <h2 className="mt-6 text-2xl font-extrabold text-gray-900">
+            <h2 className={`mt-6 text-2xl font-extrabold ${isDark ? 'text-white' : 'text-gray-900'}`}>
               Verify your email
             </h2>
             
-            <p className="mt-2 text-sm text-gray-600">
+            <p className={`mt-2 text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
               We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.
             </p>
 
             <div className="mt-6 space-y-4">
-              <p className="text-sm text-gray-500">
+              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 Didn't receive the email? Check your spam folder or
               </p>
             </div>
@@ -41,7 +44,7 @@ export default function EmailVerifyPage() {
             <div className="mt-6">
               <Link
                 href="/auth"
-                className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                className={`text-sm font-medium ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
               >
                 ← Back to sign in
               </Link>

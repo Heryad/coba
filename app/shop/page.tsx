@@ -9,10 +9,12 @@ import { Product } from '@/app/context/DataProvider';
 import { useSearchParams } from "next/navigation";
 import { FunnelIcon } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import { useTheme } from '../context/ThemeContext';
 
 function ShopContent() {
   const { data, isLoading, error } = useData();
   const searchParams = useSearchParams();
+  const { isDark } = useTheme();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   
@@ -229,15 +231,14 @@ function ShopContent() {
   };
 
   const FilterPanel = ({ isMobile }: { isMobile: boolean }) => (
-    
     <div className="p-6 xl:p-0 lg:p-0">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-gray-900">Filters</h2>
+          <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Filters</h2>
         </div>
         <button 
           onClick={() => setIsMobileFilterOpen(false)}
-          className="lg:hidden text-gray-500 hover:text-gray-700"
+          className={`lg:hidden ${isDark ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
         >
           <XMarkIcon className="w-6 h-6" />
         </button>
@@ -245,10 +246,14 @@ function ShopContent() {
 
       {/* Categories Dropdown */}
       <div className={`mb-8 transition-all duration-500 delay-100 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className="text-sm font-medium text-gray-900 mb-4">Categories</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Categories</h3>
         <select
           id={isMobile ? "mobile-categories" : "desktop-categories"}
-          className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20"
+          className={`w-full rounded-lg py-2.5 px-3 transition-colors duration-200 ${
+            isDark 
+              ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
+              : 'bg-white border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20'
+          }`}
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
@@ -261,10 +266,14 @@ function ShopContent() {
 
       {/* Subcategories Dropdown */}
       <div className={`mb-8 transition-all duration-500 delay-150 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className="text-sm font-medium text-gray-900 mb-4">Subcategories</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Subcategories</h3>
         <select
           id={isMobile ? "mobile-subcategories" : "desktop-subcategories"}
-          className="w-full bg-white border border-gray-300 text-black rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20"
+          className={`w-full rounded-lg py-2.5 px-3 transition-colors duration-200 ${
+            isDark 
+              ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
+              : 'bg-white border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20'
+          }`}
           value={selectedSubcategory}
           onChange={(e) => setSelectedSubcategory(e.target.value)}
         >
@@ -272,7 +281,7 @@ function ShopContent() {
           {selectedCategory && data?.categories
             ?.find(category => category.category_name === selectedCategory)
             ?.sub_categories?.map(subcategory => (
-              <option key={subcategory} value={subcategory} className='text-black'>
+              <option key={subcategory} value={subcategory}>
                 {subcategory}
               </option>
             ))}
@@ -281,26 +290,34 @@ function ShopContent() {
 
       {/* Price Range Inputs */}
       <div className={`mb-8 transition-all duration-500 delay-200 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className="text-sm font-medium text-gray-900 mb-4">Price Range</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Price Range</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-gray-500 block mb-1">Min ($)</label>
+            <label className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} block mb-1`}>Min ($)</label>
             <input
               type="text"
               placeholder="0"
               value={minPrice}
               onChange={(e) => {setMinPrice(e.target.value)}}
-              className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20"
+              className={`w-full rounded-lg py-2 px-3 transition-colors duration-200 ${
+                isDark 
+                  ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
+                  : 'bg-white border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20'
+              }`}
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 block mb-1">Max ($)</label>
+            <label className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} block mb-1`}>Max ($)</label>
             <input
               type="text"
               placeholder="1000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20"
+              className={`w-full rounded-lg py-2 px-3 transition-colors duration-200 ${
+                isDark 
+                  ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
+                  : 'bg-white border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black/20'
+              }`}
             />
           </div>
         </div>
@@ -308,12 +325,16 @@ function ShopContent() {
 
       {/* Colors */}
       <div className={`mb-8 transition-all duration-500 delay-300 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className="text-sm font-medium text-gray-900 mb-4">Colors</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Colors</h3>
         <div className="flex flex-wrap gap-3">
           {commonColors.map((color) => (
             <button
               key={color.value}
-              className={`group relative w-10 h-10 rounded-full transition-transform duration-200 hover:scale-110 ring-1 ${selectedColors.includes(color.value) ? 'ring-2 ring-black' : 'ring-gray-200'}`}
+              className={`group relative w-10 h-10 rounded-full transition-transform duration-200 hover:scale-110 ring-1 ${
+                selectedColors.includes(color.value) 
+                  ? isDark ? 'ring-2 ring-white' : 'ring-2 ring-black' 
+                  : isDark ? 'ring-gray-600' : 'ring-gray-200'
+              }`}
               aria-label={color.label}
               title={color.label}
               onClick={() => toggleColorSelection(color.value)}
@@ -336,12 +357,20 @@ function ShopContent() {
 
       {/* Sizes */}
       <div className={`mb-8 transition-all duration-500 delay-400 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className="text-sm font-medium text-gray-900 mb-4">Sizes</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Sizes</h3>
         <div className="grid grid-cols-3 gap-2">
           {commonSizes.map((size) => (
             <button
               key={size}
-              className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 transform hover:scale-105 ${selectedSizes.includes(size) ? 'bg-[#000] text-white' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 transform hover:scale-105 ${
+                selectedSizes.includes(size) 
+                  ? isDark 
+                    ? 'bg-white text-black' 
+                    : 'bg-[#000] text-white' 
+                  : isDark
+                    ? 'bg-[#333] text-gray-200 hover:bg-[#444]'
+                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+              }`}
               onClick={() => toggleSizeSelection(size)}
             >
               {size}
@@ -354,14 +383,22 @@ function ShopContent() {
       <div className="flex gap-4 mb-6">
         <button
           onClick={applyFilter}
-          className="w-full bg-[#000] text-white py-3 rounded-md hover:bg-black/90 transition-all duration-300 transform hover:scale-[1.02] font-medium"
+          className={`w-full py-3 rounded-md transition-all duration-300 transform hover:scale-[1.02] font-medium ${
+            isDark 
+              ? 'bg-white text-black hover:bg-gray-200' 
+              : 'bg-[#000] text-white hover:bg-black/90'
+          }`}
         >
           Apply Filters
         </button>
         {hasActiveFilters() && (
           <button
             onClick={resetFilters}
-            className="w-full bg-gray-100 text-gray-700 py-3 rounded-md hover:bg-gray-200 transition-all duration-300 transform hover:scale-[1.02] font-medium"
+            className={`w-full py-3 rounded-md transition-all duration-300 transform hover:scale-[1.02] font-medium ${
+              isDark 
+                ? 'bg-[#333] text-gray-200 hover:bg-[#444]' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
           >
             Reset
           </button>
@@ -373,19 +410,23 @@ function ShopContent() {
   if (error) {
     return (
       <div className="text-center py-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Products</h2>
-        <p className="text-gray-600 mb-8">{error.message}</p>
+        <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>Error Loading Products</h2>
+        <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-8`}>{error.message}</p>
       </div>
     );
   }
 
   return (
-    <main className="bg-white min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main className={`min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
+        <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Mobile Filter Button */}
           <button
             onClick={() => setIsMobileFilterOpen(true)}
-            className="lg:hidden mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            className={`lg:hidden mb-4 flex items-center gap-2 transition-colors duration-200 ${
+              isDark 
+                ? 'text-gray-300 hover:text-white' 
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
           >
             <FunnelIcon className='w-6 h-6'/>
             Filters
@@ -393,7 +434,7 @@ function ShopContent() {
 
           <div className="flex gap-8">
             {/* Sidebar - Desktop */}
-            <div className={`hidden lg:block w-80 flex-shrink-0 transition-all duration-700 transform ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
+            <div className={`hidden lg:hidden w-80 flex-shrink-0 transition-all duration-700 transform ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
               <div className="sticky top-24">
                 <FilterPanel isMobile={false} />
               </div>
@@ -401,7 +442,7 @@ function ShopContent() {
 
             {/* Mobile Filter Panel */}
             <div className={`lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300 ${isMobileFilterOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-              <div className={`absolute right-0 top-0 h-full w-full max-w-sm bg-white transform transition-transform duration-300 ${isMobileFilterOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+              <div className={`absolute right-0 top-0 h-full w-full max-w-sm ${isDark ? 'bg-[#222]' : 'bg-white'} transform transition-transform duration-300 ${isMobileFilterOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="h-full overflow-y-auto">
                   <FilterPanel isMobile={true} />
                 </div>
@@ -412,7 +453,7 @@ function ShopContent() {
             <div className="flex-1">
               <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 transition-all duration-500 delay-200 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {searchParams.get('search') ? (
                       `Search Results for "${searchParams.get('search')}"`
                     ) : selectedCategory ? (
@@ -425,7 +466,7 @@ function ShopContent() {
                       'All Products'
                     )}
                   </h1>
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                     {isLoading ? 'Loading products...' : 
                       error ? '' :
                       `${filteredProducts.length} Products`}
@@ -433,7 +474,11 @@ function ShopContent() {
                 </div>
                 <select 
                   id="product-sort"
-                  className="w-full sm:w-auto text-black px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/20 bg-white"
+                  className={`w-full sm:w-auto px-4 py-2 rounded-md transition-colors duration-200 ${
+                    isDark 
+                      ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
+                      : 'bg-white border-gray-300 text-black focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/20'
+                  }`}
                   value={sortOption}
                   onChange={(e) => handleSortChange(e.target.value)}
                 >
@@ -454,22 +499,22 @@ function ShopContent() {
                 </div>
               ) : error ? (
                 <div className="text-center py-12">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className={`mx-auto h-12 w-12 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
-                  <h3 className="mt-2 text-lg font-medium text-gray-900">Error loading products</h3>
-                  <p className="mt-1 text-sm text-gray-500">{''}</p>
+                  <h3 className={`mt-2 text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Error loading products</h3>
+                  <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{''}</p>
                 </div>
               ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-12">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className={`mx-auto h-12 w-12 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
-                  <h3 className="mt-2 text-lg font-medium text-gray-900">No products found</h3>
-                  <p className="mt-1 text-sm text-gray-500">Try adjusting your filters.</p>
+                  <h3 className={`mt-2 text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>No products found</h3>
+                  <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Try adjusting your filters.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
                   {filteredProducts.map(product => (
                     <div key={product.id}>
                       <ProductCard product={product} />
@@ -485,8 +530,14 @@ function ShopContent() {
 }
 
 export default function ShopPage() {
+  const { isDark } = useTheme();
+  
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className={`flex items-center justify-center min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
+        <div className={`animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 ${isDark ? 'border-white' : 'border-gray-900'}`}></div>
+      </div>
+    }>
       <ShopContent />
     </Suspense>
   );
