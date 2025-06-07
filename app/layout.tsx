@@ -9,6 +9,7 @@ import { ToastProvider } from "./context/ToastContext";
 import Toast from "./components/Toast";
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,18 +35,20 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider>
-          <ToastProvider>
-            <AuthProvider>
-              <DataProvider>
-                <CartProvider>
-                  <Navbar />
-                  {children}
-                  <Footer />
-                  <Toast />
-                </CartProvider>
-              </DataProvider>
-            </AuthProvider>
-          </ToastProvider>
+          <LanguageProvider>
+            <ToastProvider>
+              <AuthProvider>
+                <DataProvider>
+                  <CartProvider>
+                    <Navbar />
+                    {children}
+                    <Footer />
+                    <Toast />
+                  </CartProvider>
+                </DataProvider>
+              </AuthProvider>
+            </ToastProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import { useCart } from '@/app/context/CartContext';
 import { useToast } from '@/app/context/ToastContext';
 import { useData } from '@/app/context/DataProvider';
 import { useTheme } from '@/app/context/ThemeContext';
+import { useLanguage } from '@/app/context/LanguageContext';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -120,6 +121,7 @@ export default function CheckoutPage() {
     const { data } = useData();
     const { user } = useAuth();
     const { isDark } = useTheme();
+    const { translations } = useLanguage();
     const router = useRouter();
     const [isVisible, setIsVisible] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -133,6 +135,17 @@ export default function CheckoutPage() {
         state: '',
         country: 'United States'
     });
+
+    // Helper function to get translations
+    const t = (key: string, params?: Record<string, any>) => {
+        let value = key.split('.').reduce((o: any, i) => o?.[i], translations);
+        if (typeof value === 'string' && params) {
+            Object.entries(params).forEach(([paramKey, paramValue]) => {
+                value = (value as string).replace(new RegExp(`{${paramKey}}`, 'g'), String(paramValue));
+            });
+        }
+        return (typeof value === 'string' ? value : key);
+    };
 
     // Auto-fill user data when available
     useEffect(() => {
@@ -227,8 +240,12 @@ export default function CheckoutPage() {
                 <div className={`${isDark ? 'bg-[#222]' : 'bg-white'} rounded-t-[2.5rem] min-h-[calc(100vh-4rem)]`}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="text-center py-16">
-                            <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Your cart is empty</h2>
-                            <p className={`mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Add some items to your cart before checking out</p>
+                            <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                {t('checkout.emptyCart.title')}
+                            </h2>
+                            <p className={`mb-8 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                {t('checkout.emptyCart.description')}
+                            </p>
                             <Link 
                                 href="/shop"
                                 className={`px-6 py-3 rounded-md transition-all duration-300 ${
@@ -237,7 +254,7 @@ export default function CheckoutPage() {
                                         : 'bg-black text-white hover:bg-black/80'
                                 }`}
                             >
-                                Continue Shopping
+                                {t('checkout.emptyCart.continueShopping')}
                             </Link>
                         </div>
                     </div>
@@ -253,16 +270,20 @@ export default function CheckoutPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         {/* Checkout Form */}
                         <div className={`transition-all duration-700 transform ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
-                            <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>Checkout Information</h2>
+                            <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                {t('checkout.title')}
+                            </h2>
                             
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Personal Information */}
                                 <div className="pt-4">
-                                    <h3 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Personal Information</h3>
+                                    <h3 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                        {t('checkout.personalInfo.title')}
+                                    </h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="relative">
                                             <label htmlFor="username" className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                Full Name {user && <span className="text-xs text-gray-500">(from profile)</span>}
+                                                {t('checkout.personalInfo.fullName.label')} {user && <span className="text-xs text-gray-500">{t('checkout.personalInfo.fromProfile')}</span>}
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -283,14 +304,14 @@ export default function CheckoutPage() {
                                                             ? 'bg-[#333] border-gray-600 text-white placeholder-gray-400 focus:border-white focus:ring-white/20'
                                                             : 'bg-white border-gray-300 text-gray-900 focus:border-[#009450] focus:ring-[#009450]'
                                                     } ${user ? 'cursor-not-allowed' : ''}`}
-                                                    placeholder="John Doe"
+                                                    placeholder={t('checkout.personalInfo.fullName.placeholder')}
                                                 />
                                             </div>
                                         </div>
                                         
                                         <div className="relative">
                                             <label htmlFor="email" className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                Email {user && <span className="text-xs text-gray-500">(from profile)</span>}
+                                                {t('checkout.personalInfo.email.label')} {user && <span className="text-xs text-gray-500">{t('checkout.personalInfo.fromProfile')}</span>}
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -311,14 +332,14 @@ export default function CheckoutPage() {
                                                             ? 'bg-[#333] border-gray-600 text-white placeholder-gray-400 focus:border-white focus:ring-white/20'
                                                             : 'bg-white border-gray-300 text-gray-900 focus:border-[#009450] focus:ring-[#009450]'
                                                     } ${user ? 'cursor-not-allowed' : ''}`}
-                                                    placeholder="john@example.com"
+                                                    placeholder={t('checkout.personalInfo.email.placeholder')}
                                                 />
                                             </div>
                                         </div>
 
                                         <div className="relative">
                                             <label htmlFor="phone" className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                Phone {user?.phone_number && <span className="text-xs text-gray-500">(from profile)</span>}
+                                                {t('checkout.personalInfo.phone.label')} {user?.phone_number && <span className="text-xs text-gray-500">{t('checkout.personalInfo.fromProfile')}</span>}
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -339,7 +360,7 @@ export default function CheckoutPage() {
                                                             ? 'bg-[#333] border-gray-600 text-white placeholder-gray-400 focus:border-white focus:ring-white/20'
                                                             : 'bg-white border-gray-300 text-gray-900 focus:border-[#009450] focus:ring-[#009450]'
                                                     } ${user?.phone_number ? 'cursor-not-allowed' : ''}`}
-                                                    placeholder="+1 (555) 000-0000"
+                                                    placeholder={t('checkout.personalInfo.phone.placeholder')}
                                                 />
                                             </div>
                                         </div>
@@ -348,11 +369,13 @@ export default function CheckoutPage() {
 
                                 {/* Shipping Address */}
                                 <div className="pt-4">
-                                    <h3 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Shipping Address</h3>
+                                    <h3 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                        {t('checkout.shippingAddress.title')}
+                                    </h3>
                                     <div className="space-y-4">
                                         <div className="relative">
                                             <label htmlFor="address" className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                Street Address
+                                                {t('checkout.shippingAddress.street.label')}
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -373,7 +396,7 @@ export default function CheckoutPage() {
                                                             ? 'bg-[#333] border-gray-600 text-white placeholder-gray-400 focus:border-white focus:ring-white/20'
                                                             : 'bg-white border-gray-300 text-gray-900 focus:border-[#009450] focus:ring-[#009450]'
                                                     }`}
-                                                    placeholder="1234 Main St"
+                                                    placeholder={t('checkout.shippingAddress.street.placeholder')}
                                                 />
                                             </div>
                                         </div>
@@ -381,7 +404,7 @@ export default function CheckoutPage() {
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div className="relative">
                                                 <label htmlFor="city" className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                    City
+                                                    {t('checkout.shippingAddress.city.label')}
                                                 </label>
                                                 <div className="relative">
                                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -401,14 +424,14 @@ export default function CheckoutPage() {
                                                                 ? 'bg-[#333] border-gray-600 text-white placeholder-gray-400 focus:border-white focus:ring-white/20'
                                                                 : 'bg-white border-gray-300 text-gray-900 focus:border-[#009450] focus:ring-[#009450]'
                                                         }`}
-                                                        placeholder="New York"
+                                                        placeholder={t('checkout.shippingAddress.city.placeholder')}
                                                     />
                                                 </div>
                                             </div>
 
                                             <div className="relative">
                                                 <label htmlFor="state" className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                    State
+                                                    {t('checkout.shippingAddress.state.label')}
                                                 </label>
                                                 <div className="relative">
                                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -428,14 +451,14 @@ export default function CheckoutPage() {
                                                                 ? 'bg-[#333] border-gray-600 text-white placeholder-gray-400 focus:border-white focus:ring-white/20'
                                                                 : 'bg-white border-gray-300 text-gray-900 focus:border-[#009450] focus:ring-[#009450]'
                                                         }`}
-                                                        placeholder="NY"
+                                                        placeholder={t('checkout.shippingAddress.state.placeholder')}
                                                     />
                                                 </div>
                                             </div>
 
                                             <div className="relative sm:col-span-2">
                                                 <label htmlFor="country" className={`block text-sm font-medium mb-1.5 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                                    Country
+                                                    {t('checkout.shippingAddress.country.label')}
                                                 </label>
                                                 <div className="relative">
                                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -475,7 +498,9 @@ export default function CheckoutPage() {
 
                         {/* Order Summary */}
                         <div className={`transition-all duration-700 delay-300 transform ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'}`}>
-                            <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>Order Summary</h2>
+                            <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                {t('checkout.orderSummary.title')}
+                            </h2>
                             
                             {/* Cart Items */}
                             <div className="space-y-4 mb-8">
@@ -508,14 +533,16 @@ export default function CheckoutPage() {
                                                         isDark ? 'bg-[#333]' : 'bg-gray-50'
                                                     }`}>
                                                         <span className="w-3 h-3 rounded-full ring-1 ring-gray-200" style={{ backgroundColor: item.selectedColor }} />
-                                                        <span className={`text-xs font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Color</span>
+                                                        <span className={`text-xs font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                                                            {t('checkout.orderSummary.item.color')}
+                                                        </span>
                                                     </span>
                                                 )}
                                                 {item.selectedSize && (
                                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                                         isDark ? 'bg-[#333] text-gray-300' : 'bg-gray-50 text-gray-700'
                                                     }`}>
-                                                        Size: {item.selectedSize}
+                                                        {t('checkout.orderSummary.item.size')}: {item.selectedSize}
                                                     </span>
                                                 )}
                                             </div>
@@ -523,7 +550,7 @@ export default function CheckoutPage() {
                                                 <span className={`text-sm font-medium px-2.5 py-1 rounded-full ${
                                                     isDark ? 'bg-[#333] text-gray-300' : 'bg-gray-50 text-gray-600'
                                                 }`}>
-                                                    Qty: {item.quantity}
+                                                    {t('checkout.orderSummary.item.quantity')}: {item.quantity}
                                                 </span>
                                                 <span className={`text-sm font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                                     ${((item.final_price || item.price) * item.quantity).toFixed(2)}
@@ -536,7 +563,9 @@ export default function CheckoutPage() {
 
                             {/* Payment Options */}
                             <div className="pt-4 mb-8">
-                                <h3 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Payment Method</h3>
+                                <h3 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                    {t('checkout.payment.title')}
+                                </h3>
                                 <div className="space-y-4">
                                     {data.paymentMethods.length > 0 ? (
                                         <div className="grid grid-cols-1 gap-4">
@@ -578,7 +607,7 @@ export default function CheckoutPage() {
                                                             </span>
                                                             {method.price > 0 && (
                                                                 <span className={`block text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                                    Fee: ${method.price.toFixed(2)}
+                                                                    {t('checkout.payment.fee')}: ${method.price.toFixed(2)}
                                                                 </span>
                                                             )}
                                                         </div>
@@ -598,7 +627,9 @@ export default function CheckoutPage() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>No payment methods available</p>
+                                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                            {t('checkout.payment.noMethods')}
+                                        </p>
                                     )}
                                 </div>
                             </div>
@@ -607,22 +638,36 @@ export default function CheckoutPage() {
                             <div className={`rounded-xl p-6 ${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-50'}`}>
                                 <div className="space-y-4">
                                     <div className="flex justify-between text-sm">
-                                        <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>Subtotal</span>
-                                        <span className={isDark ? 'text-white' : 'text-gray-900'}>${totalPrice.toFixed(2)}</span>
+                                        <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                                            {t('checkout.total.subtotal')}
+                                        </span>
+                                        <span className={isDark ? 'text-white' : 'text-gray-900'}>
+                                            ${totalPrice.toFixed(2)}
+                                        </span>
                                     </div>
                                     {totalDiscount > 0 && (
                                         <div className="flex justify-between text-sm">
-                                            <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>Discount</span>
-                                            <span className="text-green-600">-${totalDiscount.toFixed(2)}</span>
+                                            <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                                                {t('checkout.total.discount')}
+                                            </span>
+                                            <span className="text-green-600">
+                                                -${totalDiscount.toFixed(2)}
+                                            </span>
                                         </div>
                                     )}
                                     <div className="flex justify-between text-sm">
-                                        <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>Shipping</span>
-                                        <span className={isDark ? 'text-white' : 'text-gray-900'}>Free</span>
+                                        <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                                            {t('checkout.total.shipping')}
+                                        </span>
+                                        <span className={isDark ? 'text-white' : 'text-gray-900'}>
+                                            {t('checkout.total.shippingValue')}
+                                        </span>
                                     </div>
                                     <div className={`border-t pt-4 ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
                                         <div className="flex justify-between">
-                                            <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Total</span>
+                                            <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                                {t('checkout.total.total')}
+                                            </span>
                                             <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                                 ${(totalPrice - totalDiscount).toFixed(2)}
                                             </span>       
@@ -647,9 +692,9 @@ export default function CheckoutPage() {
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Processing Order...
+                                        {t('checkout.placeOrder.processing')}
                                     </span>
-                                ) : 'Place Order'}
+                                ) : t('checkout.placeOrder.button')}
                             </button>
                         </div>
                     </div>

@@ -14,11 +14,24 @@ import {
   OfferSkeleton
 } from "@/app/components/skeletons";
 import { useTheme } from './context/ThemeContext';
+import { useLanguage } from './context/LanguageContext';
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('NEW ARRIVALS');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const { isDark } = useTheme();
+  const { translations } = useLanguage();
+
+  // Helper function to get translations
+  const t = (key: string, params?: Record<string, string | number>) => {
+    let value = key.split('.').reduce((o: any, i) => o?.[i], translations);
+    if (typeof value === 'string' && params) {
+      Object.entries(params).forEach(([key, val]) => {
+        value = (value as string).replace(`{${key}}`, String(val));
+      });
+    }
+    return (typeof value === 'string' ? value : key);
+  };
 
   // Get data from context provider
   const { data, isLoading, error } = useData();
@@ -118,7 +131,7 @@ export default function Home() {
                 <div className="absolute inset-0">
                   <Image
                     src={topBanners[0].image}
-                    alt={topBanners[0].title || 'Hero background'}
+                    alt={topBanners[0].title || t('hero.title')}
                     fill
                     className="object-cover object-top"
                     priority
@@ -130,25 +143,17 @@ export default function Home() {
               <div className="relative z-10 gap-8 items-center h-full py-[200px] px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto top-40">
                 <div className="space-y-6">
                   <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight ${isDark ? 'text-white' : 'text-black'}`}>
-                    {topBanners && topBanners.length > 0 && topBanners[0].title ? topBanners[0].title : 'Discover and Find Your Own Fashion!'}
+                    {topBanners && topBanners.length > 0 && topBanners[0].title ? topBanners[0].title : t('hero.title')}
                   </h1>
                   <p className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Explore our curated collection of stylish clothing and accessories tailored to your unique taste.
+                    {t('hero.subtitle')}
                   </p>
                   <Button
                     variant="primary"
                     className="mt-4"
                   >
-                    Shop Now
+                    {t('hero.cta')}
                   </Button>
-                </div>
-                {/* Dots or other decorations */}
-                <div className="absolute bottom-8 right-8">
-                  <div className="flex gap-1">
-                    {[...Array(1)].map((_, i) => (
-                      <div key={i} className="w-2 h-2 bg-white rounded-full opacity-60" />
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
@@ -158,8 +163,8 @@ export default function Home() {
         {/* Best Selling Section */}
         <section className={`py-12 px-4 sm:px-6 lg:px-5 mx-auto ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
           <div className="text-center mb-12">
-            <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Best selling</h2>
-            <p className={`mt-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Get in on the trend with our curated selection of best-selling styles</p>
+            <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>{t('sections.bestSelling.title')}</h2>
+            <p className={`mt-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('sections.bestSelling.subtitle')}</p>
           </div>
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -177,12 +182,12 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No products available.</p>
+              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('common.noProducts')}</p>
             </div>
           )}
           <div className="text-center mt-8">
             <Link href="/shop" className="flex justify-center">
-              <Button variant="secondary">See all</Button>
+              <Button variant="secondary">{t('sections.bestSelling.seeAll')}</Button>
             </Link>
           </div>
         </section>
@@ -197,7 +202,7 @@ export default function Home() {
                   : `${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}`}
                 onClick={() => setActiveFilter('NEW ARRIVALS')}
               >
-                NEW ARRIVALS
+                {t('sections.filters.newArrivals')}
               </button>
               <button
                 className={`transition-all duration-300 ${activeFilter === 'SALE' 
@@ -205,7 +210,7 @@ export default function Home() {
                   : `${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}`}
                 onClick={() => setActiveFilter('SALE')}
               >
-                SALE
+                {t('sections.filters.sale')}
               </button>
               <button
                 className={`transition-all duration-300 ${activeFilter === 'HOT' 
@@ -213,7 +218,7 @@ export default function Home() {
                   : `${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}`}
                 onClick={() => setActiveFilter('HOT')}
               >
-                HOT
+                {t('sections.filters.hot')}
               </button>
               <button
                 className={`transition-all duration-300 ${activeFilter === 'DISCOUNTS' 
@@ -221,7 +226,7 @@ export default function Home() {
                   : `${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}`}
                 onClick={() => setActiveFilter('DISCOUNTS')}
               >
-                DISCOUNTS
+                {t('sections.filters.discounts')}
               </button>
             </div>
           </div>
@@ -241,13 +246,13 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No products available for this filter.</p>
+              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('common.noProductsFilter')}</p>
             </div>
           )}
 
           <div className="text-center mt-8">
             <Link href="/shop" className="flex justify-center">
-              <Button variant="secondary">See all</Button>
+              <Button variant="secondary">{t('sections.bestSelling.seeAll')}</Button>
             </Link>
           </div>
         </section>
@@ -260,22 +265,22 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div className="space-y-6">
                 <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
-                  {exclusiveBanner.title}
+                  {exclusiveBanner.title || t('sections.exclusive.defaultTitle')}
                 </h2>
                 <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Unlock the exclusive style right now! Get 10% off on new arrivals.
+                  {t('sections.exclusive.subtitle')}
                 </p>
                 <Button
                   variant="primary"
                   className="mt-4"
                 >
-                  Shop Now
+                  {t('sections.exclusive.cta')}
                 </Button>
               </div>
               <div className="relative h-[400px]">
                 <Image
                   src={exclusiveBanner.image}
-                  alt="Exclusive offer"
+                  alt={exclusiveBanner.title || t('sections.exclusive.defaultTitle')}
                   fill
                   className="object-cover rounded-3xl"
                 />
@@ -283,7 +288,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No exclusive offers available at this time.</p>
+              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('common.noOffers')}</p>
             </div>
           )}
         </section>
@@ -291,7 +296,7 @@ export default function Home() {
         {/* Categories Section */}
         <section className={`py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto ${isDark ? 'bg-[#222]' : 'bg-white'}`}>
           <h2 className={`text-3xl font-bold text-center mb-12 ${isDark ? 'text-white' : 'text-black'}`}>
-            Designer Clothes For You
+            {t('sections.categories.title')}
           </h2>
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -313,8 +318,8 @@ export default function Home() {
                     <h3 className={`text-white text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>{category.name}</h3>
                     <p className={`text-white/80 mt-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                       {category.subcategories && category.subcategories.length > 0
-                        ? `${category.subcategories.length} subcategories available`
-                        : 'Explore our collection'}
+                        ? t('sections.categories.subcategories', { count: category.subcategories.length })
+                        : t('sections.categories.explore')}
                     </p>
                   </div>
                 </div>
@@ -322,11 +327,11 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No categories available.</p>
+              <p className={`text-gray-500 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('common.noCategories')}</p>
             </div>
           )}
         </section>
       </main>
-    </div >
+    </div>
   );
 }

@@ -3,10 +3,23 @@
 import { useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 function InfoPageContent() {
   const searchParams = useSearchParams();
   const { isDark } = useTheme();
+  const { translations } = useLanguage();
+
+  // Helper function to get translations
+  const t = (key: string, params?: Record<string, any>) => {
+    let value = key.split('.').reduce((o: any, i) => o?.[i], translations);
+    if (typeof value === 'string' && params) {
+      Object.entries(params).forEach(([paramKey, paramValue]) => {
+        value = (value as string).replace(new RegExp(`{${paramKey}}`, 'g'), String(paramValue));
+      });
+    }
+    return (typeof value === 'string' ? value : key);
+  };
 
   useEffect(() => {
     const section = searchParams.get('section');
@@ -24,119 +37,117 @@ function InfoPageContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* About Us Section */}
         <section id="about" className="mb-16 scroll-mt-16">
-          <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6`}>About Us</h2>
+          <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6`}>{t('info.about.title')}</h2>
           <div className="prose prose-lg max-w-none">
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>What is Coba T-shirts?</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.about.whatIs.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-              We are a print-on-demand company that offers high-quality t-shirts, sweaters, hoodies, tote bags, and many more products with custom designs. You can choose from our wide range of designs or upload your own to create unique and personalized products.
+              {t('info.about.whatIs.description')}
             </p>
 
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>How does print-on-demand work?</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.about.howWorks.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-              Print-on-demand means that we only print and ship your products when you order them. This way, we avoid waste and overstock, and we can offer you more variety and flexibility. You can order as many or as few products as you want, and we will deliver them to you in a timely manner.
+              {t('info.about.howWorks.description')}
             </p>
 
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>What are the benefits of print-on-demand?</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.about.benefits.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-              Print-on-demand has many benefits for both customers and sellers. Some of them are:
+              {t('info.about.benefits.description')}
             </p>
             <ul className={`list-disc pl-6 ${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6 space-y-2`}>
-              <li>You can create your own products with your own designs, logos, slogans, etc.</li>
-              <li>You can access a large catalog of products and designs without having to invest in inventory or storage space.</li>
-              <li>You can save money on production and shipping costs, as you only pay for what you sell.</li>
-              <li>You can reduce your environmental impact, as you avoid waste and emissions from mass production and transportation.</li>
+              {[1, 2, 3, 4].map((i) => (
+                <li key={i}>{t(`info.about.benefits.list.${i}`)}</li>
+              ))}
             </ul>
 
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>What printing methods do you use?</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.about.printing.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-4`}>
-              We use different printing methods depending on the product and the design. Some of the most common ones are:
+              {t('info.about.printing.description')}
             </p>
             <ul className={`list-disc pl-6 ${isDark ? 'text-gray-300' : 'text-gray-600'} space-y-4`}>
-              <li>
-                <span className="font-medium">DTF (Direct to Film):</span> This method uses a special film that transfers the design onto the fabric using heat and pressure. It produces vibrant colors and high-resolution images that last long and feel soft on the skin.
-              </li>
-              <li>
-                <span className="font-medium">DTG (Direct to Garment):</span> This method uses a printer that applies ink directly onto the fabric. It allows for more detail and color variation than other methods, and it works well on cotton and cotton-blend fabrics.
-              </li>
-              <li>
-                <span className="font-medium">Sublimation:</span> This method uses heat to transfer dye onto synthetic fabrics. It creates durable and fade-resistant prints that cover the entire surface of the product. It is ideal for printing on curved or irregular shapes.
-              </li>
-              <li>
-                <span className="font-medium">Screen Printing:</span> This method uses a screen mesh and plastisol-based inks to press the design onto the fabric. It produces crisp and opaque images that can withstand multiple washes. It is ideal for high-volume orders and simple designs with few colors.
-              </li>
-              <li>
-                <span className="font-medium">Embroidery:</span> This method uses a needle and thread to stitch the design onto the fabric. It produces textured and elegant images that add value to the garment. It is ideal for logos, monograms, and small details.
-              </li>
-              <li>
-                <span className="font-medium">Vinyl:</span> This method uses a vinyl cutter to cut out the design from a sheet of vinyl material. The design is then transferred onto the fabric using heat and pressure. It produces smooth and glossy images that are suitable for outdoor use. It is ideal for lettering, numbers, and shapes.
-              </li>
+              {['dtf', 'dtg', 'sublimation', 'screen', 'embroidery', 'vinyl'].map((method) => (
+                <li key={method}>
+                  <span className="font-medium">{t(`info.about.printing.methods.${method}.name`)}:</span>{' '}
+                  {t(`info.about.printing.methods.${method}.description`)}
+                </li>
+              ))}
             </ul>
           </div>
         </section>
 
         {/* Return Policy Section */}
         <section id="returns" className="mb-16 scroll-mt-16">
-          <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6`}>Return Policy</h2>
+          <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6`}>{t('info.returns.title')}</h2>
           <div className="prose prose-lg max-w-none">
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} mb-6`}>Last updated July 15, 2023</p>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} mb-6`}>
+              {t('info.returns.lastUpdated')}
+            </p>
             
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-              Thank you for your purchase. We hope you are happy with your purchase. However, if you are not completely satisfied with your purchase for any reasons, you may return it to us for an exchange only. Please see below for more information on our return policy.
+              {t('info.returns.intro')}
             </p>
 
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Returns</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.returns.returns.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-              All returns must be postmarked within five (5) days of the purchase date. All returned items must be in new and unused condition, with all original tags and labels attached.
+              {t('info.returns.returns.description')}
             </p>
 
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Return Process</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.returns.process.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-4`}>
-              To return an item, please email customer service at <a href="mailto:customersupport@cobatshirts.com" className={`${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}>customersupport@cobatshirts.com</a> to obtain a Return Merchandise Authorization (RMA) number. After receiving a RMA number, place the item securely in its original packaging and include your proof of purchase, then mail your return to the following address:
+              {t('info.returns.process.description')}{' '}
+              <a href="mailto:customersupport@cobatshirts.com" className={`${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}>
+                customersupport@cobatshirts.com
+              </a>
             </p>
             <div className={`${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-50'} p-6 rounded-lg mb-6`}>
-              <p className={`${isDark ? 'text-gray-200' : 'text-gray-600'} font-medium`}>Coba Printing and Advertising PLC</p>
-              <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Attn: Returns</p>
-              <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Addis Ababa, Ethiopia</p>
+              <p className={`${isDark ? 'text-gray-200' : 'text-gray-600'} font-medium`}>{t('info.returns.address.name')}</p>
+              <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('info.returns.address.attn')}</p>
+              <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{t('info.returns.address.location')}</p>
             </div>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-              Please note, you will be responsible for all return shipping charges. We strongly recommend that you use a trackable method to mail your return.
+              {t('info.returns.process.note')}
             </p>
 
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Refunds</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.returns.refunds.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-              After receiving your return and inspecting the condition of your item, we will process your exchange. Please allow at least seven (7) days from the receipt of your item to process your exchange. We will notify you by email when your return has been processed.
+              {t('info.returns.refunds.description')}
             </p>
 
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Exceptions</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.returns.exceptions.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-4`}>
-              For defective or damaged products, please contact us at the contact details below to arrange a refund or exchange.
+              {t('info.returns.exceptions.description')}
             </p>
 
-            <h4 className={`text-lg font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Please Note</h4>
+            <h4 className={`text-lg font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.returns.notes.title')}</h4>
             <ul className={`list-disc pl-6 ${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6 space-y-2`}>
-              <li>A 25% restocking fee will be charged for all returns.</li>
-              <li>Sale items are FINAL SALE and cannot be returned.</li>
+              {[1, 2].map((i) => (
+                <li key={i}>{t(`info.returns.notes.list.${i}`)}</li>
+              ))}
             </ul>
 
-            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Questions</h3>
+            <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.returns.questions.title')}</h3>
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              If you have any questions concerning our return policy, please contact us at{' '}
-              <a href="tel:+251938613544" className={`${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}>+251938613544</a> or{' '}
-              <a href="mailto:customersupport@cobatshirts.com" className={`${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}>customersupport@cobatshirts.com</a>
+              {t('info.returns.questions.description')}{' '}
+              <a href="tel:+251938613544" className={`${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}>
+                +251938613544
+              </a>{' '}
+              {t('info.returns.questions.or')}{' '}
+              <a href="mailto:customersupport@cobatshirts.com" className={`${isDark ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'}`}>
+                customersupport@cobatshirts.com
+              </a>
             </p>
           </div>
         </section>
 
         {/* Contact Section */}
         <section id="contact" className="mb-16 scroll-mt-16">
-          <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6`}>Contact Us</h2>
+          <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-6`}>{t('info.contact.title')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Contact Information */}
             <div className="space-y-8">
               <div>
-                <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>Get in Touch</h3>
+                <h3 className={`text-xl font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} mb-4`}>{t('info.contact.getInTouch.title')}</h3>
                 <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-                  Have questions about our products or services? We're here to help. Reach out to us through any of the following channels:
+                  {t('info.contact.getInTouch.description')}
                 </p>
               </div>
 
@@ -148,7 +159,7 @@ function InfoPageContent() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className={`text-lg font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>Phone</h4>
+                    <h4 className={`text-lg font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>{t('info.contact.phone.title')}</h4>
                     <a href="tel:+251938613544" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors duration-200`}>
                       +251 938 61 35 44
                     </a>
@@ -162,7 +173,7 @@ function InfoPageContent() {
                     </svg>
                   </div>
                   <div>
-                    <h4 className={`text-lg font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>Email</h4>
+                    <h4 className={`text-lg font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>{t('info.contact.email.title')}</h4>
                     <a href="mailto:customersupport@cobatshirts.com" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors duration-200`}>
                       customersupport@cobatshirts.com
                     </a>
@@ -176,7 +187,7 @@ function InfoPageContent() {
               <form className="space-y-6">
                 <div>
                   <label htmlFor="name" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'} mb-1`}>
-                    Name
+                    {t('info.contact.form.name')}
                   </label>
                   <input
                     type="text"
@@ -187,13 +198,13 @@ function InfoPageContent() {
                         ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
                         : 'bg-white border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/20'
                     }`}
-                    placeholder="Your name"
+                    placeholder={t('info.contact.form.namePlaceholder')}
                   />
                 </div>
 
                 <div>
                   <label htmlFor="email" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'} mb-1`}>
-                    Email
+                    {t('info.contact.form.email')}
                   </label>
                   <input
                     type="email"
@@ -204,13 +215,13 @@ function InfoPageContent() {
                         ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
                         : 'bg-white border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/20'
                     }`}
-                    placeholder="your.email@example.com"
+                    placeholder={t('info.contact.form.emailPlaceholder')}
                   />
                 </div>
 
                 <div>
                   <label htmlFor="phone" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'} mb-1`}>
-                    Phone
+                    {t('info.contact.form.phone')}
                   </label>
                   <input
                     type="tel"
@@ -221,13 +232,13 @@ function InfoPageContent() {
                         ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
                         : 'bg-white border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/20'
                     }`}
-                    placeholder="Your phone number"
+                    placeholder={t('info.contact.form.phonePlaceholder')}
                   />
                 </div>
 
                 <div>
                   <label htmlFor="message" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'} mb-1`}>
-                    Message
+                    {t('info.contact.form.message')}
                   </label>
                   <textarea
                     id="message"
@@ -238,7 +249,7 @@ function InfoPageContent() {
                         ? 'bg-[#333] border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20' 
                         : 'bg-white border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black/20'
                     }`}
-                    placeholder="Your message"
+                    placeholder={t('info.contact.form.messagePlaceholder')}
                   ></textarea>
                 </div>
 
@@ -250,7 +261,7 @@ function InfoPageContent() {
                       : 'bg-black text-white hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20'
                   }`}
                 >
-                  Send Message
+                  {t('info.contact.form.submit')}
                 </button>
               </form>
             </div>

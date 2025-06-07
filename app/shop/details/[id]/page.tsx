@@ -6,6 +6,7 @@ import { useData } from "@/app/context/DataProvider";
 import { useCart } from "@/app/context/CartContext";
 import { useToast } from "@/app/context/ToastContext";
 import { useTheme } from '@/app/context/ThemeContext';
+import { useLanguage } from '@/app/context/LanguageContext';
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,6 +19,7 @@ export default function ProductDetailsPage() {
     const { addToCart, cartItems } = useCart();
     const { addToast } = useToast();
     const { isDark } = useTheme();
+    const { translations } = useLanguage();
     const product = data?.products.find((product) => product.id === id);
 
     const [selectedImage, setSelectedImage] = useState(0);
@@ -26,6 +28,17 @@ export default function ProductDetailsPage() {
     const [isVisible, setIsVisible] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [isInCart, setIsInCart] = useState(false);
+
+    // Helper function to get translations
+    const t = (key: string, params?: Record<string, any>) => {
+        let value = key.split('.').reduce((o: any, i) => o?.[i], translations);
+        if (typeof value === 'string' && params) {
+            Object.entries(params).forEach(([paramKey, paramValue]) => {
+                value = (value as string).replace(new RegExp(`{${paramKey}}`, 'g'), String(paramValue));
+            });
+        }
+        return (typeof value === 'string' ? value : key);
+    };
 
     // Check if product is in cart on initial load and when dependencies change
     useEffect(() => {
@@ -105,7 +118,7 @@ export default function ProductDetailsPage() {
                 <div className={`${isDark ? 'bg-[#222]' : 'bg-white'} rounded-t-[2.5rem]`}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="text-center py-16">
-                            <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>Error Loading Product</h2>
+                            <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>{t('shop.details.error.title')}</h2>
                             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-8`}>{error.message}</p>
                             <button 
                                 onClick={() => window.history.back()}
@@ -115,7 +128,7 @@ export default function ProductDetailsPage() {
                                         : 'bg-[#000] text-white hover:bg-black/90'
                                 }`}
                             >
-                                Back to Shop
+                                {t('shop.details.error.backButton')}
                             </button>
                         </div>
                     </div>
@@ -182,7 +195,7 @@ export default function ProductDetailsPage() {
                                         ))}
                                     </div>
                                     <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                                        {product.review?.toFixed(1)} ({product.review > 0 ? 'reviews' : 'No reviews yet'})
+                                        {product.review?.toFixed(1)} ({product.review > 0 ? t('shop.details.reviews') : t('shop.details.noReviews')})
                                     </span>
                                 </div>
 
@@ -193,7 +206,7 @@ export default function ProductDetailsPage() {
                                             <p className="text-2xl font-bold text-[#009450]">${product.final_price?.toFixed(2)}</p>
                                             <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-500'} line-through`}>${product.price?.toFixed(2)}</p>
                                             <span className="bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
-                                                {product.discount}% OFF
+                                                {t('shop.details.discount', { percent: product.discount })}
                                             </span>
                                         </div>
                                     ) : (
@@ -203,14 +216,14 @@ export default function ProductDetailsPage() {
 
                                 {/* Description */}
                                 <div className={`mt-6 transition-all duration-500 delay-600 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                                    <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>Description</h2>
+                                    <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>{t('shop.details.description')}</h2>
                                     <p className={`mt-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{product.description}</p>
                                 </div>
 
                                 {/* Colors */}
                                 {product.colors && product.colors.length > 0 && (
                                     <div className={`mt-8 transition-all duration-500 delay-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                                        <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>Color</h2>
+                                        <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>{t('shop.details.color')}</h2>
                                         <div className="mt-3 flex gap-3">
                                             {formatColors(product.colors).map((color, index) => (
                                                 <button
@@ -224,7 +237,7 @@ export default function ProductDetailsPage() {
                                                     {selectedColor === index && (
                                                         <span className={`absolute inset-0 rounded-full ring-2 ${isDark ? 'ring-white' : 'ring-[#000]'} transition-opacity duration-200`} />
                                                     )}
-                                                    <span className="sr-only">{color.name}</span>
+                                                    <span className="sr-only">{t(`shop.details.colors.${color.name}`)}</span>
                                                 </button>
                                             ))}
                                         </div>
@@ -235,9 +248,9 @@ export default function ProductDetailsPage() {
                                 {product.sizes && product.sizes.length > 0 && (
                                     <div className={`mt-8 transition-all duration-500 delay-800 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                                         <div className="flex items-center justify-between">
-                                            <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>Size</h2>
+                                            <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>{t('shop.details.size')}</h2>
                                             <button className={`text-sm font-medium ${isDark ? 'text-gray-200 hover:text-white' : 'text-[#000] hover:text-black/80'} transition-colors duration-200`}>
-                                                Size guide
+                                                {t('shop.details.sizeGuide')}
                                             </button>
                                         </div>
                                         <div className="mt-3 grid grid-cols-6 gap-3">
@@ -257,7 +270,7 @@ export default function ProductDetailsPage() {
 
                                 {/* Quantity */}
                                 <div className={`mt-8 transition-all duration-500 delay-800 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                                    <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-3`}>Quantity</h2>
+                                    <h2 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-3`}>{t('shop.details.quantity')}</h2>
                                     <div className={`flex items-center w-32 h-10 rounded-xl ${
                                         isDark 
                                             ? 'border-gray-600 bg-[#333]' 
@@ -270,7 +283,7 @@ export default function ProductDetailsPage() {
                                                     ? 'text-gray-400 hover:text-gray-200'
                                                     : 'text-gray-500 hover:text-gray-700'
                                             }`}
-                                            aria-label="Decrease quantity"
+                                            aria-label={t('shop.details.decreaseQuantity')}
                                         >
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
@@ -284,7 +297,7 @@ export default function ProductDetailsPage() {
                                                     ? 'text-gray-400 hover:text-gray-200'
                                                     : 'text-gray-500 hover:text-gray-700'
                                             }`}
-                                            aria-label="Increase quantity"
+                                            aria-label={t('shop.details.increaseQuantity')}
                                         >
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -314,14 +327,14 @@ export default function ProductDetailsPage() {
                                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                                     </svg>
-                                                    <span>Added to Cart</span>
+                                                    <span>{t('shop.details.addedToCart')}</span>
                                                 </>
                                             ) : (
                                                 <>
                                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                                     </svg>
-                                                    <span>Add to Cart</span>
+                                                    <span>{t('shop.details.addToCart')}</span>
                                                 </>
                                             )}
                                         </div>
@@ -339,7 +352,7 @@ export default function ProductDetailsPage() {
                                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                             </svg>
-                                            <span>Proceed to Checkout</span>
+                                            <span>{t('shop.details.proceedToCheckout')}</span>
                                         </Link>
                                     )}
                                 </div>
@@ -350,14 +363,14 @@ export default function ProductDetailsPage() {
                     {/* Similar Products Section */}
                     {product && !isLoading && (
                         <div className={`mt-24 transition-all duration-700 delay-500 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-                            <h2 className={`text-2xl font-bold mb-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>Similar Products</h2>
+                            <h2 className={`text-2xl font-bold mb-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('shop.details.similarProducts')}</h2>
                             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                                 {data.products
                                     .filter(p => 
                                         p.id !== product.id && // Exclude current product
                                         (p.category === product.category || p.subcategory === product.subcategory)
                                     )
-                                    .slice(0, 3) // Show only 4 similar products
+                                    .slice(0, 3) // Show only 3 similar products
                                     .map(similarProduct => (
                                         <div key={similarProduct.id}>
                                             <ProductCard product={similarProduct} />

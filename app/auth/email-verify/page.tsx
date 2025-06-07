@@ -1,9 +1,16 @@
 'use client';
 import Link from 'next/link';
 import { useTheme } from '@/app/context/ThemeContext';
+import { useLanguage } from '@/app/context/LanguageContext';
 
 export default function EmailVerifyPage() {
   const { isDark } = useTheme();
+  const { translations } = useLanguage();
+
+  // Helper function to get translations
+  const t = (key: string) => {
+    return key.split('.').reduce((o: any, i) => o?.[i], translations) || key;
+  };
   
   return (
     <div className={`min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'} flex flex-col justify-center py-12 sm:px-6 lg:px-8`}>
@@ -28,16 +35,16 @@ export default function EmailVerifyPage() {
             </div>
 
             <h2 className={`mt-6 text-2xl font-extrabold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Verify your email
+              {t('auth.emailVerify.title')}
             </h2>
             
             <p className={`mt-2 text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.
+              {t('auth.emailVerify.description')}
             </p>
 
             <div className="mt-6 space-y-4">
               <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                Didn't receive the email? Check your spam folder or
+                {t('auth.emailVerify.spamNote')}
               </p>
             </div>
 
@@ -46,7 +53,7 @@ export default function EmailVerifyPage() {
                 href="/auth"
                 className={`text-sm font-medium ${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
               >
-                ← Back to sign in
+                {t('auth.emailVerify.backToSignIn')}
               </Link>
             </div>
           </div>

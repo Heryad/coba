@@ -1,0 +1,528 @@
+{
+  "navigation": {
+    "home": "Home",
+    "shop": "Shop",
+    "cart": "Cart",
+    "account": "Account",
+    "trackOrder": "Track Order",
+    "ambassador": "Ambassador Program",
+    "contact": "Contact",
+    "profile": "Profile",
+    "signIn": "Login / Register",
+    "signOut": "Sign Out",
+    "searchPlaceholder": "Search products...",
+    "categories": "Categories",
+    "branding": {
+      "name": "Coba"
+    }
+  },
+  "hero": {
+    "title": "Discover and Find Your Own Fashion!",
+    "subtitle": "Explore our curated collection of stylish clothing and accessories tailored to your unique taste.",
+    "cta": "Shop Now"
+  },
+  "sections": {
+    "bestSelling": {
+      "title": "Best Selling",
+      "subtitle": "Get in on the trend with our curated selection of best-selling styles",
+      "seeAll": "See all"
+    },
+    "filters": {
+      "newArrivals": "NEW ARRIVALS",
+      "sale": "SALE",
+      "hot": "HOT",
+      "discounts": "DISCOUNTS"
+    },
+    "exclusive": {
+      "defaultTitle": "Exclusive Offer",
+      "subtitle": "Unlock the exclusive style right now! Get 10% off on new arrivals.",
+      "cta": "Shop Now"
+    },
+    "categories": {
+      "title": "Designer Clothes For You",
+      "subcategories": "{count} subcategories available",
+      "explore": "Explore our collection"
+    }
+  },
+  "common": {
+    "noProducts": "No products available.",
+    "noProductsFilter": "No products available for this filter.",
+    "noOffers": "No exclusive offers available at this time.",
+    "noCategories": "No categories available."
+  },
+  "profile": {
+    "tabs": {
+      "profile": "Profile Details",
+      "orders": "Orders"
+    },
+    "details": {
+      "title": "Profile Details",
+      "editButton": "Edit Profile",
+      "saveButton": "Save",
+      "savingButton": "Saving...",
+      "fields": {
+        "username": "Username",
+        "email": "Email",
+        "phoneNumber": "Phone Number"
+      }
+    },
+    "referral": {
+      "title": "Referral Program",
+      "description": "Invite your friends and earn 10% commission on their first purchase!",
+      "copyButton": "Copy Link"
+    },
+    "orders": {
+      "noOrders": "No orders found."
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "Company",
+      "about": "About Us",
+      "returns": "Return Policy",
+      "contact": "Contact Us"
+    },
+    "quickLinks": {
+      "title": "Quick Links",
+      "shop": "Shop",
+      "trackOrder": "Track Order",
+      "signIn": "Sign In"
+    },
+    "contact": {
+      "title": "Contact",
+      "phone": "+251 938 61 35 44",
+      "email": "customersupport@cobatshirts.com"
+    },
+    "social": {
+      "title": "Follow Us"
+    },
+    "copyright": "© {year} Coba T-shirts. All rights reserved."
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "size": "Size",
+    "total": "Total",
+    "checkout": "Checkout",
+    "remove": "Remove item",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity"
+  },
+  "shop": {
+    "title": {
+      "allProducts": "All Products",
+      "searchResults": "Search Results for \"{query}\"",
+      "categoryOnly": "{category}",
+      "categoryAndSubcategory": "{category} — {subcategory}"
+    },
+    "filters": {
+      "title": "Filters",
+      "categories": "Categories",
+      "allCategories": "All Categories",
+      "subcategories": "Subcategories",
+      "allSubcategories": "All Subcategories",
+      "priceRange": {
+        "title": "Price Range",
+        "min": "Min ($)",
+        "max": "Max ($)"
+      },
+      "colors": "Colors",
+      "sizes": "Sizes",
+      "buttons": {
+        "apply": "Apply Filters",
+        "reset": "Reset"
+      }
+    },
+    "sort": {
+      "title": "Sort by: {option}",
+      "options": {
+        "newest": "Newest",
+        "priceLowHigh": "Price: Low to High",
+        "priceHighLow": "Price: High to Low",
+        "rating": "Customer Rating"
+      }
+    },
+    "status": {
+      "loading": "Loading products...",
+      "productsCount": "{count} Products",
+      "noProducts": "No products found",
+      "tryAdjusting": "Try adjusting your filters."
+    },
+    "details": {
+      "error": {
+        "title": "Error Loading Product",
+        "backButton": "Back to Shop"
+      },
+      "reviews": "reviews",
+      "noReviews": "No reviews yet",
+      "discount": "{percent}% OFF",
+      "description": "Description",
+      "color": "Color",
+      "colors": {
+        "white": "White",
+        "black": "Black",
+        "red": "Red",
+        "green": "Green",
+        "blue": "Blue",
+        "yellow": "Yellow",
+        "purple": "Purple",
+        "pink": "Pink",
+        "orange": "Orange",
+        "brown": "Brown",
+        "gray": "Gray",
+        "beige": "Beige"
+      },
+      "size": "Size",
+      "sizeGuide": "Size guide",
+      "quantity": "Quantity",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
+      "addToCart": "Add to Cart",
+      "addedToCart": "Added to Cart",
+      "proceedToCheckout": "Proceed to Checkout",
+      "similarProducts": "Similar Products"
+    }
+  },
+  "ambassador": {
+    "hero": {
+      "title": "Ambassador Program",
+      "subtitle": "Join our ambassador program and earn rewards by sharing your love for our products."
+    },
+    "benefits": {
+      "title": "Program Benefits",
+      "items": {
+        "commission": "Earn 10% commission on all sales from your referrals",
+        "payment": "Get paid directly to your account",
+        "tracking": "Track your earnings in real-time"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "steps": {
+        "share": "Share your unique referral link with friends",
+        "earn": "When they sign up and make a purchase, you earn 10%",
+        "credit": "Commission is automatically credited to your account",
+        "withdraw": "Withdraw your earnings anytime"
+      }
+    },
+    "referralLink": {
+      "title": "Your Referral Link",
+      "description": "Share this unique link with your friends and start earning!",
+      "copyButton": "Copy Link",
+      "copiedButton": "Copied!",
+      "proTip": "Pro Tip: Share your link on social media to reach more people and increase your earnings!",
+      "signInPrompt": "Sign in to get your unique referral link and start earning rewards!",
+      "signInButton": "Sign In",
+      "signUpButton": "Sign Up"
+    },
+    "stats": {
+      "totalAmbassadors": "Total Ambassadors",
+      "totalAmbassadorsValue": "1,000+",
+      "commissionPaid": "Commission Paid",
+      "commissionPaidValue": "$50,000+",
+      "averageEarnings": "Average Earnings",
+      "averageEarningsValue": "$500/month"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "questions": {
+        "howToEarn": {
+          "question": "How do I earn commission?",
+          "answer": "You earn 10% commission on every purchase made by users who sign up using your referral link."
+        },
+        "whenPaid": {
+          "question": "When do I get paid?",
+          "answer": "Commissions are paid out monthly, provided you have earned at least $50 in commission."
+        },
+        "linkDuration": {
+          "question": "How long does the referral link work?",
+          "answer": "Your referral link works indefinitely. Once someone signs up using your link, you will earn commission on their first purchase."
+        },
+        "tracking": {
+          "question": "Can I track my referrals?",
+          "answer": "Yes! You can track all your referrals and earnings in real-time through your ambassador dashboard."
+        }
+      }
+    }
+  },
+  "trackOrder": {
+    "title": "Track Your Order",
+    "subtitle": "Enter your order ID to track your order status",
+    "form": {
+      "placeholder": "Enter your order ID",
+      "button": "Track Order",
+      "tracking": "Tracking..."
+    },
+    "details": {
+      "orderNumber": "Order #",
+      "placedOn": "Placed on",
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "processing": "Processing",
+        "delivered": "Delivered"
+      },
+      "shipping": {
+        "title": "Shipping Details"
+      },
+      "payment": {
+        "title": "Payment Method"
+      },
+      "items": {
+        "title": "Order Items",
+        "quantity": "Qty",
+        "size": "Size"
+      },
+      "summary": {
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "total": "Total"
+      }
+    }
+  },
+  "info": {
+    "about": {
+      "title": "About Us",
+      "whatIs": {
+        "title": "What is Coba T-shirts?",
+        "description": "We are a print-on-demand company that offers high-quality t-shirts, sweaters, hoodies, tote bags, and many more products with custom designs. You can choose from our wide range of designs or upload your own to create unique and personalized products."
+      },
+      "howWorks": {
+        "title": "How does print-on-demand work?",
+        "description": "Print-on-demand means that we only print and ship your products when you order them. This way, we avoid waste and overstock, and we can offer you more variety and flexibility. You can order as many or as few products as you want, and we will deliver them to you in a timely manner."
+      },
+      "benefits": {
+        "title": "What are the benefits of print-on-demand?",
+        "description": "Print-on-demand has many benefits for both customers and sellers. Some of them are:",
+        "list": {
+          "1": "You can create your own products with your own designs, logos, slogans, etc.",
+          "2": "You can access a large catalog of products and designs without having to invest in inventory or storage space.",
+          "3": "You can save money on production and shipping costs, as you only pay for what you sell.",
+          "4": "You can reduce your environmental impact, as you avoid waste and emissions from mass production and transportation."
+        }
+      },
+      "printing": {
+        "title": "What printing methods do you use?",
+        "description": "We use different printing methods depending on the product and the design. Some of the most common ones are:",
+        "methods": {
+          "dtf": {
+            "name": "DTF (Direct to Film)",
+            "description": "This method uses a special film that transfers the design onto the fabric using heat and pressure. It produces vibrant colors and high-resolution images that last long and feel soft on the skin."
+          },
+          "dtg": {
+            "name": "DTG (Direct to Garment)",
+            "description": "This method uses a printer that applies ink directly onto the fabric. It allows for more detail and color variation than other methods, and it works well on cotton and cotton-blend fabrics."
+          },
+          "sublimation": {
+            "name": "Sublimation",
+            "description": "This method uses heat to transfer dye onto synthetic fabrics. It creates durable and fade-resistant prints that cover the entire surface of the product. It is ideal for printing on curved or irregular shapes."
+          },
+          "screen": {
+            "name": "Screen Printing",
+            "description": "This method uses a screen mesh and plastisol-based inks to press the design onto the fabric. It produces crisp and opaque images that can withstand multiple washes. It is ideal for high-volume orders and simple designs with few colors."
+          },
+          "embroidery": {
+            "name": "Embroidery",
+            "description": "This method uses a needle and thread to stitch the design onto the fabric. It produces textured and elegant images that add value to the garment. It is ideal for logos, monograms, and small details."
+          },
+          "vinyl": {
+            "name": "Vinyl",
+            "description": "This method uses a vinyl cutter to cut out the design from a sheet of vinyl material. The design is then transferred onto the fabric using heat and pressure. It produces smooth and glossy images that are suitable for outdoor use. It is ideal for lettering, numbers, and shapes."
+          }
+        }
+      }
+    },
+    "returns": {
+      "title": "Return Policy",
+      "lastUpdated": "Last updated July 15, 2023",
+      "intro": "Thank you for your purchase. We hope you are happy with your purchase. However, if you are not completely satisfied with your purchase for any reasons, you may return it to us for an exchange only. Please see below for more information on our return policy.",
+      "returns": {
+        "title": "Returns",
+        "description": "All returns must be postmarked within five (5) days of the purchase date. All returned items must be in new and unused condition, with all original tags and labels attached."
+      },
+      "process": {
+        "title": "Return Process",
+        "description": "To return an item, please email customer service at",
+        "note": "Please note, you will be responsible for all return shipping charges. We strongly recommend that you use a trackable method to mail your return."
+      },
+      "address": {
+        "name": "Coba Printing and Advertising PLC",
+        "attn": "Attn: Returns",
+        "location": "Addis Ababa, Ethiopia"
+      },
+      "refunds": {
+        "title": "Refunds",
+        "description": "After receiving your return and inspecting the condition of your item, we will process your exchange. Please allow at least seven (7) days from the receipt of your item to process your exchange. We will notify you by email when your return has been processed."
+      },
+      "exceptions": {
+        "title": "Exceptions",
+        "description": "For defective or damaged products, please contact us at the contact details below to arrange a refund or exchange."
+      },
+      "notes": {
+        "title": "Please Note",
+        "list": {
+          "1": "A 25% restocking fee will be charged for all returns.",
+          "2": "Sale items are FINAL SALE and cannot be returned."
+        }
+      },
+      "questions": {
+        "title": "Questions",
+        "description": "If you have any questions concerning our return policy, please contact us at",
+        "or": "or"
+      }
+    },
+    "contact": {
+      "title": "Contact Us",
+      "getInTouch": {
+        "title": "Get in Touch",
+        "description": "Have questions about our products or services? We're here to help. Reach out to us through any of the following channels:"
+      },
+      "phone": {
+        "title": "Phone"
+      },
+      "email": {
+        "title": "Email"
+      },
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Your name",
+        "email": "Email",
+        "emailPlaceholder": "your.email@example.com",
+        "phone": "Phone",
+        "phonePlaceholder": "Your phone number",
+        "message": "Message",
+        "messagePlaceholder": "Your message",
+        "submit": "Send Message"
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in to your account",
+      "button": "Sign in",
+      "loading": "Signing in...",
+      "createAccount": "Or create a new account",
+      "haveAccount": "Already have an account? Sign in"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "button": "Create account",
+      "loading": "Creating account..."
+    },
+    "google": {
+      "button": "Sign in with Google",
+      "loading": "Signing in with Google..."
+    },
+    "form": {
+      "username": "Username",
+      "email": "Email address",
+      "password": "Password"
+    },
+    "divider": "Or continue with",
+    "emailVerify": {
+      "title": "Verify your email",
+      "description": "We've sent a verification link to your email address. Please check your inbox and click the link to verify your account.",
+      "spamNote": "Didn't receive the email? Check your spam folder or",
+      "backToSignIn": "← Back to sign in"
+    }
+  },
+  "checkout": {
+    "emptyCart": {
+      "title": "Your cart is empty",
+      "description": "Add some items to your cart before checking out",
+      "continueShopping": "Continue Shopping"
+    },
+    "title": "Checkout Information",
+    "personalInfo": {
+      "title": "Personal Information",
+      "fromProfile": "(from profile)",
+      "fullName": {
+        "label": "Full Name",
+        "placeholder": "John Doe"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "john@example.com"
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "+1 (555) 000-0000"
+      }
+    },
+    "shippingAddress": {
+      "title": "Shipping Address",
+      "street": {
+        "label": "Street Address",
+        "placeholder": "1234 Main St"
+      },
+      "city": {
+        "label": "City",
+        "placeholder": "New York"
+      },
+      "state": {
+        "label": "State",
+        "placeholder": "NY"
+      },
+      "country": {
+        "label": "Country"
+      }
+    },
+    "orderSummary": {
+      "title": "Order Summary",
+      "item": {
+        "color": "Color",
+        "size": "Size",
+        "quantity": "Qty"
+      }
+    },
+    "payment": {
+      "title": "Payment Method",
+      "noMethods": "No payment methods available",
+      "fee": "Fee"
+    },
+    "total": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "shipping": "Shipping",
+      "shippingValue": "Free",
+      "total": "Total"
+    },
+    "placeOrder": {
+      "button": "Place Order",
+      "processing": "Processing Order..."
+    }
+  },
+  "languages": {
+    "en": "English",
+    "am": "አማርኛ",
+    "switchLanguage": "Switch language"
+  },
+  "orderCard": {
+    "order": "Order",
+    "quantity": "Qty",
+    "color": "Color",
+    "size": "Size",
+    "viewDetails": "View Details",
+    "alreadyRated": "Already rated",
+    "rateProduct": "Rate Product",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "processing": "Processing",
+      "delivered": "Delivered"
+    }
+  },
+  "ratingModal": {
+    "rateProduct": "Rate: {{productName}}",
+    "selectRating": "Select a rating",
+    "starCount": {
+      "singular": "1 star",
+      "plural": "{{count}} stars"
+    },
+    "yourReview": "Your Review",
+    "reviewPlaceholder": "Share your experience with this product...",
+    "cancel": "Cancel",
+    "submitReview": "Submit Review",
+    "submitting": "Submitting..."
+  }
+} 

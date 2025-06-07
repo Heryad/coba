@@ -5,6 +5,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Button from '../components/Button';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function AuthPage() {
     const { signIn, signUp, signInWithGoogle, user } = useAuth();
@@ -13,11 +14,17 @@ export default function AuthPage() {
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { isDark } = useTheme();
+    const { translations } = useLanguage();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
         username: '',
     });
+
+    // Helper function to get translations
+    const t = (key: string) => {
+        return key.split('.').reduce((o: any, i) => o?.[i], translations) || key;
+    };
 
     useEffect(() => {
         // Redirect if user is already authenticated
@@ -67,7 +74,7 @@ export default function AuthPage() {
         <div className={`min-h-screen ${isDark ? 'bg-[#222]' : 'bg-white'} flex flex-col justify-center py-12 sm:px-6 lg:px-8`}>
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <h2 className={`mt-6 text-center text-3xl font-extrabold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    {isSignIn ? 'Sign in to your account' : 'Create your account'}
+                    {t(isSignIn ? 'auth.signIn.title' : 'auth.signUp.title')}
                 </h2>
                 <p className={`mt-2 text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     {isSignIn ? (
@@ -77,19 +84,16 @@ export default function AuthPage() {
                                 onClick={() => setIsSignIn(false)}
                                 className={`font-bold ${isDark ? 'text-white hover:text-gray-200' : 'text-[#000] hover:text-black/80'}`}
                             >
-                                create a new account
+                                {t('auth.signIn.createAccount')}
                             </button>
                         </>
                     ) : (
-                        <>
-                            Already have an account?{' '}
-                            <button
-                                onClick={() => setIsSignIn(true)}
-                                className={`font-bold ${isDark ? 'text-white hover:text-gray-200' : 'text-[#000] hover:text-black/80'}`}
-                            >
-                                Sign in
-                            </button>
-                        </>
+                        <button
+                            onClick={() => setIsSignIn(true)}
+                            className={`font-bold ${isDark ? 'text-white hover:text-gray-200' : 'text-[#000] hover:text-black/80'}`}
+                        >
+                            {t('auth.signIn.haveAccount')}
+                        </button>
                     )}
                 </p>
             </div>
@@ -100,7 +104,7 @@ export default function AuthPage() {
                         {!isSignIn && (
                             <div>
                                 <label htmlFor="username" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                    Username
+                                    {t('auth.form.username')}
                                 </label>
                                 <div className="mt-1">
                                     <input
@@ -122,7 +126,7 @@ export default function AuthPage() {
 
                         <div>
                             <label htmlFor="email" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                Email address
+                                {t('auth.form.email')}
                             </label>
                             <div className="mt-1">
                                 <input
@@ -144,7 +148,7 @@ export default function AuthPage() {
 
                         <div>
                             <label htmlFor="password" className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                                Password
+                                {t('auth.form.password')}
                             </label>
                             <div className="mt-1">
                                 <input
@@ -179,10 +183,10 @@ export default function AuthPage() {
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        {isSignIn ? 'Signing in...' : 'Creating account...'}
+                                        {t(isSignIn ? 'auth.signIn.loading' : 'auth.signUp.loading')}
                                     </div>
                                 ) : (
-                                    isSignIn ? 'Sign in' : 'Create account'
+                                    t(isSignIn ? 'auth.signIn.button' : 'auth.signUp.button')
                                 )}
                             </Button>
                         </div>
@@ -194,7 +198,9 @@ export default function AuthPage() {
                                 <div className={`w-full border-t ${isDark ? 'border-gray-700' : 'border-gray-300'}`} />
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className={`px-2 ${isDark ? 'bg-[#222] text-gray-400' : 'bg-white text-gray-500'}`}>Or continue with</span>
+                                <span className={`px-2 ${isDark ? 'bg-[#222] text-gray-400' : 'bg-white text-gray-500'}`}>
+                                    {t('auth.divider')}
+                                </span>
                             </div>
                         </div>
 
@@ -214,7 +220,7 @@ export default function AuthPage() {
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Signing in with Google...
+                                        {t('auth.google.loading')}
                                     </div>
                                 ) : (
                                     <>
@@ -224,7 +230,7 @@ export default function AuthPage() {
                                                 d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"
                                             />
                                         </svg>
-                                        Sign in with Google
+                                        {t('auth.google.button')}
                                     </>
                                 )}
                             </button>

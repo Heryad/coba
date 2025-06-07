@@ -2,9 +2,22 @@
 
 import Link from 'next/link';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
   const { isDark } = useTheme();
+  const { translations } = useLanguage();
+
+  // Helper function to get translations
+  const t = (key: string) => {
+    const value = key.split('.').reduce((o, i) => o?.[i], translations);
+    return (typeof value === 'string' ? value : key) as string;
+  };
+
+  // Helper function to format copyright text with current year
+  const getCopyright = () => {
+    return t('footer.copyright').replace('{year}', new Date().getFullYear().toString());
+  };
 
   return (
     <footer className={`${isDark ? 'bg-[#222] text-white' : 'bg-white text-black'}`}>
@@ -12,21 +25,21 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Company</h3>
+            <h3 className="text-sm font-semibold mb-4">{t('footer.company.title')}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/info" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
-                  About Us
+                  {t('footer.company.about')}
                 </Link>
               </li>
               <li>
                 <Link href="/info?section=returns" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
-                  Return Policy
+                  {t('footer.company.returns')}
                 </Link>
               </li>
               <li>
                 <Link href="/info?section=contact" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
-                  Contact Us
+                  {t('footer.company.contact')}
                 </Link>
               </li>
             </ul>
@@ -34,21 +47,21 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-sm font-semibold mb-4">{t('footer.quickLinks.title')}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/shop" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
-                  Shop
+                  {t('footer.quickLinks.shop')}
                 </Link>
               </li>
               <li>
                 <Link href="/track-order" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
-                  Track Order
+                  {t('footer.quickLinks.trackOrder')}
                 </Link>
               </li>
               <li>
                 <Link href="/auth" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
-                  Sign In
+                  {t('footer.quickLinks.signIn')}
                 </Link>
               </li>
             </ul>
@@ -56,16 +69,16 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Contact</h3>
+            <h3 className="text-sm font-semibold mb-4">{t('footer.contact.title')}</h3>
             <ul className="space-y-3">
               <li>
                 <a href="tel:+251938613544" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
-                  +251 938 61 35 44
+                  {t('footer.contact.phone')}
                 </a>
               </li>
               <li>
                 <a href="mailto:customersupport@cobatshirts.com" className={`${isDark ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-black'} transition-colors duration-200`}>
-                  customersupport@cobatshirts.com
+                  {t('footer.contact.email')}
                 </a>
               </li>
             </ul>
@@ -73,7 +86,7 @@ export default function Footer() {
 
           {/* Social Media */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Follow Us</h3>
+            <h3 className="text-sm font-semibold mb-4">{t('footer.social.title')}</h3>
             <div className="flex space-x-4">
               <a
                 href="https://www.tiktok.com/@cobatshirts"
@@ -121,7 +134,7 @@ export default function Footer() {
 
         <div className={`mt-8 pt-8 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
           <p className={`text-center ${isDark ? 'text-gray-300' : 'text-gray-600'} text-sm`}>
-            © {new Date().getFullYear()} Coba T-shirts. All rights reserved.
+            {getCopyright()}
           </p>
         </div>
       </div>

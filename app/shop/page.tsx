@@ -10,11 +10,13 @@ import { useSearchParams } from "next/navigation";
 import { FunnelIcon } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 function ShopContent() {
   const { data, isLoading, error } = useData();
   const searchParams = useSearchParams();
   const { isDark } = useTheme();
+  const { translations } = useLanguage();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   
@@ -27,13 +29,24 @@ function ShopContent() {
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('newest');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+
+  // Helper function to get translations
+  const t = (key: string, params?: Record<string, any>) => {
+    let value = key.split('.').reduce((o: any, i) => o?.[i], translations);
+    if (typeof value === 'string' && params) {
+      Object.entries(params).forEach(([paramKey, paramValue]) => {
+        value = (value as string).replace(new RegExp(`{${paramKey}}`, 'g'), String(paramValue));
+      });
+    }
+    return (typeof value === 'string' ? value : key);
+  };
   
   // Sort options for the dropdown
   const sortOptions = [
-    { value: 'newest', label: 'Newest' },
-    { value: 'price-low-high', label: 'Price: Low to High' },
-    { value: 'price-high-low', label: 'Price: High to Low' },
-    { value: 'rating', label: 'Customer Rating' },
+    { value: 'newest', label: t('shop.sort.options.newest') },
+    { value: 'price-low-high', label: t('shop.sort.options.priceLowHigh') },
+    { value: 'price-high-low', label: t('shop.sort.options.priceHighLow') },
+    { value: 'rating', label: t('shop.sort.options.rating') },
   ];
 
   // Common colors for filter
@@ -234,7 +247,7 @@ function ShopContent() {
     <div className="p-6 xl:p-0 lg:p-0">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Filters</h2>
+          <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('shop.filters.title')}</h2>
         </div>
         <button 
           onClick={() => setIsMobileFilterOpen(false)}
@@ -246,7 +259,7 @@ function ShopContent() {
 
       {/* Categories Dropdown */}
       <div className={`mb-8 transition-all duration-500 delay-100 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Categories</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>{t('shop.filters.categories')}</h3>
         <select
           id={isMobile ? "mobile-categories" : "desktop-categories"}
           className={`w-full rounded-lg py-2.5 px-3 transition-colors duration-200 ${
@@ -257,7 +270,7 @@ function ShopContent() {
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
-          <option value="">All Categories</option>
+          <option value="">{t('shop.filters.allCategories')}</option>
           {data?.categories?.map(category => (
             <option key={category.id} value={category.category_name}>{category.category_name}</option>
           ))}
@@ -266,7 +279,7 @@ function ShopContent() {
 
       {/* Subcategories Dropdown */}
       <div className={`mb-8 transition-all duration-500 delay-150 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Subcategories</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>{t('shop.filters.subcategories')}</h3>
         <select
           id={isMobile ? "mobile-subcategories" : "desktop-subcategories"}
           className={`w-full rounded-lg py-2.5 px-3 transition-colors duration-200 ${
@@ -277,7 +290,7 @@ function ShopContent() {
           value={selectedSubcategory}
           onChange={(e) => setSelectedSubcategory(e.target.value)}
         >
-          <option value="">All Subcategories</option>
+          <option value="">{t('shop.filters.allSubcategories')}</option>
           {selectedCategory && data?.categories
             ?.find(category => category.category_name === selectedCategory)
             ?.sub_categories?.map(subcategory => (
@@ -290,10 +303,10 @@ function ShopContent() {
 
       {/* Price Range Inputs */}
       <div className={`mb-8 transition-all duration-500 delay-200 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Price Range</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>{t('shop.filters.priceRange.title')}</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} block mb-1`}>Min ($)</label>
+            <label className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} block mb-1`}>{t('shop.filters.priceRange.min')}</label>
             <input
               type="text"
               placeholder="0"
@@ -307,7 +320,7 @@ function ShopContent() {
             />
           </div>
           <div>
-            <label className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} block mb-1`}>Max ($)</label>
+            <label className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} block mb-1`}>{t('shop.filters.priceRange.max')}</label>
             <input
               type="text"
               placeholder="1000"
@@ -325,7 +338,7 @@ function ShopContent() {
 
       {/* Colors */}
       <div className={`mb-8 transition-all duration-500 delay-300 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Colors</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>{t('shop.filters.colors')}</h3>
         <div className="flex flex-wrap gap-3">
           {commonColors.map((color) => (
             <button
@@ -357,7 +370,7 @@ function ShopContent() {
 
       {/* Sizes */}
       <div className={`mb-8 transition-all duration-500 delay-400 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>Sizes</h3>
+        <h3 className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-4`}>{t('shop.filters.sizes')}</h3>
         <div className="grid grid-cols-3 gap-2">
           {commonSizes.map((size) => (
             <button
@@ -389,7 +402,7 @@ function ShopContent() {
               : 'bg-[#000] text-white hover:bg-black/90'
           }`}
         >
-          Apply Filters
+          {t('shop.filters.buttons.apply')}
         </button>
         {hasActiveFilters() && (
           <button
@@ -400,7 +413,7 @@ function ShopContent() {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Reset
+            {t('shop.filters.buttons.reset')}
           </button>
         )}
       </div>
@@ -408,10 +421,14 @@ function ShopContent() {
   );
 
   if (error) {
+    const errorMessage = typeof error === 'object' && error !== null && 'message' in error 
+      ? error.message 
+      : 'An error occurred';
+    
     return (
       <div className="text-center py-16">
-        <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>Error Loading Products</h2>
-        <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-8`}>{error.message}</p>
+        <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>{t('shop.status.noProducts')}</h2>
+        <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-8`}>{errorMessage}</p>
       </div>
     );
   }
@@ -429,7 +446,7 @@ function ShopContent() {
             }`}
           >
             <FunnelIcon className='w-6 h-6'/>
-            Filters
+            {t('shop.filters.title')}
           </button>
 
           <div className="flex gap-8">
@@ -455,21 +472,21 @@ function ShopContent() {
                 <div>
                   <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {searchParams.get('search') ? (
-                      `Search Results for "${searchParams.get('search')}"`
+                      t('shop.title.searchResults', { query: searchParams.get('search') })
                     ) : selectedCategory ? (
                       selectedSubcategory ? (
-                        `${selectedCategory} — ${selectedSubcategory}`
+                        t('shop.title.categoryAndSubcategory', { category: selectedCategory, subcategory: selectedSubcategory })
                       ) : (
-                        selectedCategory
+                        t('shop.title.categoryOnly', { category: selectedCategory })
                       )
                     ) : (
-                      'All Products'
+                      t('shop.title.allProducts')
                     )}
                   </h1>
                   <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                    {isLoading ? 'Loading products...' : 
+                    {isLoading ? t('shop.status.loading') : 
                       error ? '' :
-                      `${filteredProducts.length} Products`}
+                      t('shop.status.productsCount', { count: filteredProducts.length })}
                   </p>
                 </div>
                 <select 
@@ -484,7 +501,7 @@ function ShopContent() {
                 >
                   {sortOptions.map(option => (
                     <option key={option.value} value={option.value}>
-                      Sort by: {option.label}
+                      {t('shop.sort.title', { option: option.label })}
                     </option>
                   ))}
                 </select>
@@ -502,16 +519,18 @@ function ShopContent() {
                   <svg className={`mx-auto h-12 w-12 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
-                  <h3 className={`mt-2 text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Error loading products</h3>
-                  <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{''}</p>
+                  <h3 className={`mt-2 text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('shop.status.noProducts')}</h3>
+                  <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {typeof error === 'object' && error !== null && 'message' in error ? error : 'An error occurred'}
+                  </p>
                 </div>
               ) : filteredProducts.length === 0 ? (
                 <div className="text-center py-12">
                   <svg className={`mx-auto h-12 w-12 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
-                  <h3 className={`mt-2 text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>No products found</h3>
-                  <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Try adjusting your filters.</p>
+                  <h3 className={`mt-2 text-lg font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('shop.status.noProducts')}</h3>
+                  <p className={`mt-1 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('shop.status.tryAdjusting')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">

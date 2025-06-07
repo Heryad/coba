@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useToast } from '@/app/context/ToastContext';
 import { useSearchParams } from 'next/navigation';
 import { useTheme } from '@/app/context/ThemeContext';
+import { useLanguage } from '@/app/context/LanguageContext';
 import Image from 'next/image';
 
 interface OrderProduct {
@@ -37,9 +38,16 @@ function TrackOrderContent() {
     const { addToast } = useToast();
     const searchParams = useSearchParams();
     const { isDark } = useTheme();
+    const { translations } = useLanguage();
     const [orderId, setOrderId] = useState('');
     const [order, setOrder] = useState<Order | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    // Helper function to get translations
+    const t = (key: string) => {
+        const value = key.split('.').reduce((o, i) => o?.[i], translations);
+        return (typeof value === 'string' ? value : key) as string;
+    };
 
     const fetchOrder = async (id: string) => {
         setIsLoading(true);
@@ -95,15 +103,21 @@ function TrackOrderContent() {
         }
     };
 
+    const getStatusText = (status: string) => {
+        return t(`trackOrder.details.status.${status}`);
+    };
+
     return (
         <main className={`${isDark ? 'bg-[#222]' : 'bg-white'} min-h-screen`}>
             <div className={`${isDark ? 'bg-[#222]' : 'bg-white'}`}>
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="text-center mb-12 transform transition-all duration-500 hover:scale-[1.02]">
                         <h1 className={`text-4xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                            Track Your Order
+                            {t('trackOrder.title')}
                         </h1>
-                        <p className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Enter your order ID to track your order status</p>
+                        <p className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {t('trackOrder.subtitle')}
+                        </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12">
@@ -112,7 +126,7 @@ function TrackOrderContent() {
                                 type="text"
                                 value={orderId}
                                 onChange={(e) => setOrderId(e.target.value)}
-                                placeholder="Enter your order ID"
+                                placeholder={t('trackOrder.form.placeholder')}
                                 className={`flex-1 rounded-xl border-2 px-4 py-3 transition-all duration-300 ${
                                     isDark 
                                         ? 'bg-[#333] border-gray-600 text-white placeholder-gray-400 focus:border-white focus:ring-white/20 group-hover:border-gray-500'
@@ -135,9 +149,9 @@ function TrackOrderContent() {
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Tracking...
+                                        {t('trackOrder.form.tracking')}
                                     </span>
-                                ) : 'Track Order'}
+                                ) : t('trackOrder.form.button')}
                             </button>
                         </div>
                     </form>
@@ -153,13 +167,15 @@ function TrackOrderContent() {
                                     : 'bg-gradient-to-r from-gray-50 to-white border-gray-100'
                             }`}>
                                 <div>
-                                    <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Order #{order.id}</h2>
+                                    <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                        {t('trackOrder.details.orderNumber')}{order.id}
+                                    </h2>
                                     <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                                        Placed on {new Date(order.created_at).toLocaleDateString()}
+                                        {t('trackOrder.details.placedOn')} {new Date(order.created_at).toLocaleDateString()}
                                     </p>
                                 </div>
                                 <span className={`px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(order.status)} transition-all duration-300 hover:scale-105`}>
-                                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                    {getStatusText(order.status)}
                                 </span>
                             </div>
 
@@ -175,7 +191,7 @@ function TrackOrderContent() {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
-                                        Shipping Details
+                                        {t('trackOrder.details.shipping.title')}
                                     </h3>
                                     <div className={`space-y-2 text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                                         <p>{order.address}</p>
@@ -193,7 +209,7 @@ function TrackOrderContent() {
                                         <svg className={`w-5 h-5 ${isDark ? 'text-white' : 'text-[#000]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                         </svg>
-                                        Payment Method
+                                        {t('trackOrder.details.payment.title')}
                                     </h3>
                                     <div className="flex items-center gap-3">
                                         {order.payment_methods.icon && (
@@ -221,7 +237,7 @@ function TrackOrderContent() {
                                     <svg className={`w-5 h-5 ${isDark ? 'text-white' : 'text-[#000]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                                     </svg>
-                                    Order Items
+                                    {t('trackOrder.details.items.title')}
                                 </h3>
                                 <div className="space-y-4">
                                     {order.products.map((product, index) => (
@@ -253,11 +269,13 @@ function TrackOrderContent() {
                                                         </span>
                                                     )}
                                                     {product.selectedSize && (
-                                                        <span className="ml-2">Size: {product.selectedSize}</span>
+                                                        <span className="ml-2">{t('trackOrder.details.items.size')}: {product.selectedSize}</span>
                                                     )}
                                                 </div>
                                                 <div className="mt-2 flex items-center justify-between">
-                                                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Qty: {product.quantity}</span>
+                                                    <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                        {t('trackOrder.details.items.quantity')}: {product.quantity}
+                                                    </span>
                                                     <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                                         ${(product.price * product.quantity).toFixed(2)}
                                                     </span>
@@ -276,18 +294,24 @@ function TrackOrderContent() {
                             }`}>
                                 <div className="space-y-3">
                                     <div className="flex justify-between text-sm">
-                                        <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>Subtotal</span>
+                                        <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                                            {t('trackOrder.details.summary.subtotal')}
+                                        </span>
                                         <span className={isDark ? 'text-white' : 'text-black'}>${order.total.toFixed(2)}</span>
                                     </div>
                                     {order.discount > 0 && (
                                         <div className="flex justify-between text-sm">
-                                            <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>Discount</span>
+                                            <span className={isDark ? 'text-gray-300' : 'text-gray-600'}>
+                                                {t('trackOrder.details.summary.discount')}
+                                            </span>
                                             <span className={isDark ? 'text-white' : 'text-black'}>-${order.discount.toFixed(2)}</span>
                                         </div>
                                     )}
                                     <div className={`border-t pt-3 mt-3 ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
                                         <div className="flex justify-between">
-                                            <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-black'}`}>Total</span>
+                                            <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-black'}`}>
+                                                {t('trackOrder.details.summary.total')}
+                                            </span>
                                             <span className={`text-base font-bold ${isDark ? 'text-white' : 'text-black'}`}>
                                                 ${(order.total - order.discount).toFixed(2)}
                                             </span>

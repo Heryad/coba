@@ -11,6 +11,7 @@ import { useToast } from '@/app/context/ToastContext';
 import { format } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
 import { useTheme } from '@/app/context/ThemeContext';
+import { useLanguage } from '@/app/context/LanguageContext';
 
 
 // Define types to match fetched data and OrderItemCard props
@@ -71,6 +72,7 @@ function ProfilePageContent() {
   const { user, loading } = useAuth();
   const { addToast } = useToast();
   const { isDark } = useTheme();
+  const { translations } = useLanguage();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
   const [isEditing, setIsEditing] = useState(false);
@@ -78,6 +80,7 @@ function ProfilePageContent() {
   const [userOrders, setUserOrders] = useState<OrderForCard[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ratings, setRatings] = useState<Rating[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [form, setForm] = useState({
     username: user?.username || '',
@@ -85,7 +88,12 @@ function ProfilePageContent() {
     phone_number: user?.phone_number || '',
     photo_url: user?.photo_url || '',
   });
-  const [isSaving, setIsSaving] = useState(false);
+
+  // Helper function to get translations
+  const t = (key: string) => {
+    const value = key.split('.').reduce((o, i) => o?.[i], translations);
+    return (typeof value === 'string' ? value : key) as string;
+  };
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -294,7 +302,7 @@ function ProfilePageContent() {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
             >
-              Profile Details
+              {t('profile.tabs.profile')}
             </button>
             <button
               onClick={() => handleTabChange('orders')}
@@ -308,7 +316,7 @@ function ProfilePageContent() {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
             >
-              Orders
+              {t('profile.tabs.orders')}
             </button>
           </nav>
         </div>
@@ -319,27 +327,31 @@ function ProfilePageContent() {
             {/* Profile Information */}
             <div className={`${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-100'} rounded-md p-6`}>
               <div className="flex justify-between items-center mb-6">
-                <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Profile Details</h2>
+                <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {t('profile.details.title')}
+                </h2>
                 {isEditing ? (
                   <Button
                     variant="primary"
                     onClick={handleProfileUpdate}
                     disabled={isSaving}
                   >
-                    {isSaving ? 'Saving...' : 'Save'}
+                    {isSaving ? t('profile.details.savingButton') : t('profile.details.saveButton')}
                   </Button>
                 ) : (
                   <Button
                     variant="secondary"
                     onClick={() => setIsEditing(true)}
                   >
-                    Edit Profile
+                    {t('profile.details.editButton')}
                   </Button>
                 )}
               </div>
               <div className="space-y-6">
                 <div className="relative">
-                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Username</label>
+                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                    {t('profile.details.fields.username')}
+                  </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                       <UserIcon className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} aria-hidden="true" />
@@ -359,7 +371,9 @@ function ProfilePageContent() {
                   </div>
                 </div>
                 <div className="relative">
-                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Email</label>
+                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                    {t('profile.details.fields.email')}
+                  </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                       <EnvelopeIcon className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} aria-hidden="true" />
@@ -379,7 +393,9 @@ function ProfilePageContent() {
                   </div>
                 </div>
                 <div className="relative">
-                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Phone Number</label>
+                  <label className={`block text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                    {t('profile.details.fields.phoneNumber')}
+                  </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                       <PhoneIcon className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} aria-hidden="true" />
@@ -403,9 +419,11 @@ function ProfilePageContent() {
 
             {/* Referral Program */}
             <div className={`${isDark ? 'bg-[#2A2A2A]' : 'bg-gray-100'} rounded-md p-6`}>
-              <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>Referral Program</h2>
+              <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>
+                {t('profile.referral.title')}
+              </h2>
               <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-                Invite your friends and earn 10% commission on their first purchase!
+                {t('profile.referral.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <input
@@ -419,7 +437,7 @@ function ProfilePageContent() {
                   }`}
                 />
                 <Button onClick={handleCopyInviteLink}>
-                  Copy Link
+                  {t('profile.referral.copyButton')}
                 </Button>
               </div>
             </div>
@@ -436,7 +454,9 @@ function ProfilePageContent() {
               ))
             ) : (
               <div className="text-center py-10">
-                <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>No orders found.</p>
+                <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {t('profile.orders.noOrders')}
+                </p>
               </div>
             )}
           </div>

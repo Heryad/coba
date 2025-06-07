@@ -8,6 +8,7 @@ import { useToast } from '@/app/context/ToastContext';
 import { StarIcon } from '@heroicons/react/24/outline';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import { useTheme } from '@/app/context/ThemeContext';
+import { useLanguage } from '@/app/context/LanguageContext';
 
 interface OrderItem {
   id: string;
@@ -44,9 +45,10 @@ export default function OrderItemCard({ order, ratings }: OrderItemCardProps) {
   const [selectedItem, setSelectedItem] = useState<OrderItem | null>(null);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {user} = useAuth();
+  const { user } = useAuth();
   const { addToast } = useToast();
   const { isDark } = useTheme();
+  const { t } = useLanguage();
 
   const statusColors = {
     pending: isDark ? 'bg-amber-900/20 text-amber-400 border-amber-900/30' : 'bg-amber-50 text-amber-700 border-amber-200',
@@ -95,14 +97,16 @@ export default function OrderItemCard({ order, ratings }: OrderItemCardProps) {
       <div className={`p-6 border-b ${isDark ? 'border-gray-700' : 'border-gray-50'}`}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>Order #{order.id}</h3>
+            <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
+              {t('orderCard.order')} #{order.id}
+            </h3>
             <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
               {format(new Date(order.date), 'MMM dd, yyyy')}
             </p>
           </div>
           <div className="flex items-center gap-4">
             <span className={`px-3 py-1.5 rounded-full text-sm font-medium border ${statusColors[order.status]}`}>
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+              {t(`orderCard.status.${order.status}`)}
             </span>
             <span className={`text-lg font-semibold ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>
               ${order.total.toFixed(2)}
@@ -130,17 +134,17 @@ export default function OrderItemCard({ order, ratings }: OrderItemCardProps) {
               </h4>
               <div className="mt-1.5 flex items-center gap-2">
                 <span className={`text-sm ${isDark ? 'text-gray-400 bg-gray-800' : 'text-gray-500 bg-gray-50'} px-2.5 py-1 rounded-full`}>
-                  Qty: {item.quantity}
+                  {t('orderCard.quantity')}: {item.quantity}
                 </span>
                 {item.selectedColor && (
                   <span className={`inline-flex items-center gap-1.5 px-2 py-1 ${isDark ? 'bg-gray-800' : 'bg-gray-50'} rounded-full`}>
                     <span className={`w-3 h-3 rounded-full ring-1 ${isDark ? 'ring-gray-600' : 'ring-gray-200'}`} style={{ backgroundColor: item.selectedColor }} />
-                    <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Color</span>
+                    <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('orderCard.color')}</span>
                   </span>
                 )}
                 {item.selectedSize && (
                   <span className={`px-2 py-1 ${isDark ? 'bg-gray-800 text-gray-400' : 'bg-gray-50 text-gray-600'} rounded-full text-xs font-medium`}>
-                    Size: {item.selectedSize}
+                    {t('orderCard.size')}: {item.selectedSize}
                   </span>
                 )}
               </div>
@@ -157,7 +161,7 @@ export default function OrderItemCard({ order, ratings }: OrderItemCardProps) {
                       setIsRatingModalOpen(true);
                     }}
                     className={`text-amber-400 hover:text-amber-500 transition-colors p-1.5 rounded-full ${isDark ? 'hover:bg-gray-800' : 'hover:bg-amber-50'} disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent`}
-                    title={ratings.some(r => r.product_id === item.id && r.is_active) ? "Already rated" : "Rate Product"}
+                    title={ratings.some(r => r.product_id === item.id && r.is_active) ? t('orderCard.alreadyRated') : t('orderCard.rateProduct')}
                     disabled={ratings.some(r => r.product_id === item.id && r.is_active)}
                   >
                     {ratings.some(r => r.product_id === item.id && r.is_active) ? (
@@ -184,7 +188,7 @@ export default function OrderItemCard({ order, ratings }: OrderItemCardProps) {
           href={`/track-order?orderId=${order.id}`}
           className={`inline-flex items-center text-sm font-medium ${isDark ? 'text-gray-100 hover:text-white' : 'text-gray-900 hover:text-black'} transition-colors duration-200 group`}
         >
-          View Details
+          {t('orderCard.viewDetails')}
           <svg 
             className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" 
             fill="none" 

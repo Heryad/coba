@@ -10,6 +10,7 @@ import { usePathname } from 'next/navigation';
 import CartDropdown from './CartDropdown';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '@/app/context/ThemeContext';
+import { useLanguage } from '@/app/context/LanguageContext';
 
 
 export default function Navbar() {
@@ -17,6 +18,7 @@ export default function Navbar() {
   const { cartItems } = useCart();
   const { user, signOut } = useAuth();
   const { isDark } = useTheme();
+  const { translations } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -33,6 +35,30 @@ export default function Navbar() {
   const cartBtnRef = useRef<HTMLButtonElement>(null);
   const mobileCartBtnRef = useRef<HTMLButtonElement>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+  const languageBtnRef = useRef<HTMLButtonElement>(null);
+  const { currentLanguage, changeLanguage } = useLanguage();
+
+  // Move languageFlags outside the component
+  const languageFlags: { [key: string]: string } = {
+    en: "🇺🇸",
+    am: "🇪🇹"
+  };
+
+  // Add useEffect to handle initial language state
+  useEffect(() => {
+    // This ensures the language state is properly synced after hydration
+    const savedLanguage = localStorage.getItem('preferred_language') || 'en';
+    if (currentLanguage !== savedLanguage) {
+      changeLanguage(savedLanguage);
+    }
+  }, []);
+
+  // Helper function to get translations
+  const t = (key: string) => {
+    const value = key.split('.').reduce((o, i) => o?.[i], translations);
+    return (typeof value === 'string' ? value : key) as string;
+  };
 
   // Update active states when URL changes
   useEffect(() => {
@@ -112,6 +138,14 @@ export default function Navbar() {
       ) {
         setIsProfileDropdownOpen(false);
       }
+
+      if (
+        languageBtnRef.current &&
+        !languageBtnRef.current.contains(event.target as Node) &&
+        !(event.target as Element).closest('.language-dropdown')
+      ) {
+        setIsLanguageDropdownOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -157,7 +191,7 @@ export default function Navbar() {
               : 'bg-white'
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
@@ -271,7 +305,7 @@ export default function Navbar() {
                     : 'border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-900'
               }`}
             >
-              Track Order
+              {t('navigation.trackOrder')}
             </Link>
 
             <Link
@@ -286,18 +320,21 @@ export default function Navbar() {
                     : 'border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-900'
               }`}
             >
-              Ambassador Program
+              {t('navigation.ambassador')}
             </Link>
 
-            {/* Search, Login and Cart */}
+            {/* Search, Language, Login and Cart */}
             <div className="hidden lg:flex items-center space-x-4">
               <ThemeToggle />
+
+              
+
               {/* Search */}
               <div className="relative">
                 <form onSubmit={handleSearch}>
                   <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder={t('navigation.searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className={`pl-10 pr-4 py-2 rounded-full border focus:outline-none focus:ring-2 focus:border-transparent text-sm ${
@@ -335,7 +372,7 @@ export default function Navbar() {
                       {user.photo_url ? (
                         <img
                           src={user.photo_url}
-                          alt={user.username || 'Profile'}
+                          alt={user.username || t('navigation.profile')}
                           className="h-8 w-8 rounded-full mr-2"
                         />
                       ) : (
@@ -365,7 +402,7 @@ export default function Navbar() {
                           role="menuitem"
                           onClick={() => setIsProfileDropdownOpen(false)}
                         >
-                          My Profile
+                          {t('profile.tabs.profile')}
                         </Link>
                         <Link
                           href="/profile?tab=orders"
@@ -377,10 +414,11 @@ export default function Navbar() {
                           role="menuitem"
                           onClick={() => setIsProfileDropdownOpen(false)}
                         >
-                          My Orders
+                          {t('profile.tabs.orders')}
                         </Link>
                         <button
                           onClick={() => {
+
                             signOut();
                             setIsProfileDropdownOpen(false);
                           }}
@@ -391,7 +429,7 @@ export default function Navbar() {
                           }`}
                           role="menuitem"
                         >
-                          Sign Out
+                          {t('navigation.signOut')}
                         </button>
                       </div>
                     </div>
@@ -409,6 +447,7 @@ export default function Navbar() {
                   <svg className={`h-5 w-5 mr-1 ${isDark || hasScrolled ? 'text-gray-400' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
+                  {t('navigation.signIn')}
                 </Link>
               )}
 
@@ -434,6 +473,75 @@ export default function Navbar() {
                 {isCartDropdownOpen && (
                   <div className="cart-dropdown">
                     <CartDropdown onAction={() => { setIsCartDropdownOpen(false) }} />
+                  </div>
+                )}
+              </div>
+
+              {/* Language Switcher */}
+              <div className="relative">
+                <button
+                  ref={languageBtnRef}
+                  onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)}
+                  className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                    isDark || hasScrolled 
+                      ? 'text-gray-300 hover:text-white hover:bg-white/10' 
+                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                  }`}
+                >
+                  {/* Use a client-side only wrapper for the flag */}
+                  <span className="mr-2 text-lg" suppressHydrationWarning>
+                    {languageFlags[currentLanguage] || languageFlags['en']}
+                  </span>
+                  <span suppressHydrationWarning>
+                    {currentLanguage.toUpperCase()}
+                  </span>
+                  <svg
+                    className={`ml-2 h-5 w-5 transition-transform duration-200 ${isLanguageDropdownOpen ? 'rotate-180' : ''}`}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+
+                {/* Language Dropdown */}
+                {isLanguageDropdownOpen && (
+                  <div className="language-dropdown absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50">
+                    <div className={`py-1 rounded-md ${isDark ? 'bg-[#333] ring-1 ring-white/10' : 'bg-white ring-1 ring-black/5'}`}>
+                      <div className={`px-4 py-2 text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                        {t('languages.switchLanguage')}
+                      </div>
+                      {Object.entries(languageFlags).map(([lang, flag]) => (
+                        <button
+                          key={lang}
+                          onClick={() => {
+                            changeLanguage(lang);
+                            setIsLanguageDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-2 text-sm flex items-center space-x-3 ${
+                            currentLanguage === lang
+                              ? isDark
+                                ? 'bg-[#444] text-white'
+                                : 'bg-gray-100 text-gray-900'
+                              : isDark
+                                ? 'text-gray-300 hover:bg-[#444] hover:text-white'
+                                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                          }`}
+                        >
+                          <span className="text-lg">{flag}</span>
+                          <span>{t(`languages.${lang}`)}</span>
+                          {currentLanguage === lang && (
+                            <svg className="ml-auto h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -507,9 +615,38 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      <div className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${isDark ? 'bg-[#2A2A2A]' : 'bg-white'} ${isMobileMenuOpen ? 'max-h-screen opacity-100 pb-4' : 'max-h-0 opacity-0'
-        }`}>
+      <div className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${isDark ? 'bg-[#2A2A2A]' : 'bg-white'} ${isMobileMenuOpen ? 'max-h-screen opacity-100 pb-4' : 'max-h-0 opacity-0'}`}>
         <nav className={`px-4 pt-2 pb-3 space-y-1 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+          {/* Language Switcher for Mobile */}
+          <div className="px-3 py-2">
+            <div className={`text-xs font-medium mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              {t('languages.switchLanguage')}
+            </div>
+            <div className="flex space-x-2">
+              {Object.entries(languageFlags).map(([lang, flag]) => (
+                <button
+                  key={lang}
+                  onClick={() => {
+                    changeLanguage(lang);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex-1 flex items-center justify-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${
+                    currentLanguage === lang
+                      ? isDark
+                        ? 'bg-[#444] text-white'
+                        : 'bg-gray-100 text-gray-900'
+                      : isDark
+                        ? 'text-gray-300 hover:bg-[#444] hover:text-white'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  }`}
+                >
+                  <span className="text-lg" suppressHydrationWarning>{flag}</span>
+                  <span>{t(`languages.${lang}`)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Link
             onClick={() => { setIsMobileMenuOpen(false) }}
             href="/"
@@ -522,7 +659,7 @@ export default function Navbar() {
                   : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
               }`}
           >
-            Home
+            {t('navigation.home')}
           </Link>
 
           {/* Mobile Categories */}
@@ -600,7 +737,7 @@ export default function Navbar() {
                   : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
             }`}
           >
-            Track Order
+            {t('navigation.trackOrder')}
           </Link>
 
           <Link
@@ -616,7 +753,7 @@ export default function Navbar() {
                   : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
             }`}
           >
-            Ambassador Program
+            {t('navigation.ambassador')}
           </Link>
 
           <Link
@@ -632,7 +769,7 @@ export default function Navbar() {
                   : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
             }`}
           >
-            Contact
+            {t('navigation.contact')}
           </Link>
 
           {/* Mobile Login/Profile Button */}
@@ -642,7 +779,7 @@ export default function Navbar() {
                 {user.photo_url ? (
                   <img
                     src={user.photo_url}
-                    alt={user.username || 'Profile'}
+                    alt={user.username || t('navigation.profile')}
                     className="h-8 w-8 rounded-full mr-3"
                   />
                 ) : (
@@ -656,7 +793,7 @@ export default function Navbar() {
                 )}
                 <div className="flex-1">
                   <p className={`text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'}`}>
-                    {user.username || 'Profile'}
+                    {user.username || t('navigation.profile')}
                   </p>
                   <div className="mt-1 space-y-1">
                     <Link
@@ -668,7 +805,7 @@ export default function Navbar() {
                       }`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      My Profile
+                      {t('profile.tabs.profile')}
                     </Link>
                     <Link
                       href="/profile?tab=orders"
@@ -679,7 +816,7 @@ export default function Navbar() {
                       }`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      My Orders
+                      {t('profile.tabs.orders')}
                     </Link>
                     <button
                       onClick={() => {
@@ -692,7 +829,7 @@ export default function Navbar() {
                           : 'text-red-600 hover:text-red-700'
                       }`}
                     >
-                      Sign Out
+                      {t('navigation.signOut')}
                     </button>
                   </div>
                 </div>
@@ -711,7 +848,7 @@ export default function Navbar() {
               <svg className={`h-5 w-5 mr-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              Login / Register
+              {t('navigation.signIn')}
             </Link>
           )}
         </nav>
@@ -722,7 +859,7 @@ export default function Navbar() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={t('navigation.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`w-full pl-10 pr-4 py-2 rounded-full border focus:outline-none focus:ring-2 focus:border-transparent text-sm ${
